@@ -1,0 +1,5 @@
+export const GAME_STATES = {
+  EXPLORING: "EXPLORING",
+  COMBAT: "COMBAT",
+  GAME_OVER: "GAME_OVER",
+};
