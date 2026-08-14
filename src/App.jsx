@@ -5,6 +5,7 @@ import { GAME_STATES } from "./game/gameState";
 import { rooms } from "./game/rooms";
 import { move } from "./game/movement";
 import { createWorldState } from "./game/worldState";
+import { resolveEvents } from "./game/eventResolver";
 
 function App() {
   const [player, setPlayer] = useState(createPlayer());
@@ -30,7 +31,12 @@ function App() {
       newLog.push(`${updatedEnemy.name} has been defeated!`);
       newLog.push("You may continue exploring.");
 
-      setCompletedEncounters((prev) => [...prev, currentRoom.id]);
+      setWorldState((prev) => ({
+        ...prev,
+        completedEncounters: prev.completedEncounters.includes(currentRoom.id)
+          ? prev.completedEncounters
+          : [...prev.completedEncounters, currentRoom.id],
+      }));
 
       setGameState(GAME_STATES.EXPLORING);
     } else {
@@ -81,6 +87,7 @@ function App() {
 
     setWorldState((prev) => ({
       ...prev,
+
       examinedFeatures: prev.examinedFeatures.includes(featureKey)
         ? prev.examinedFeatures
         : [...prev.examinedFeatures, featureKey],
@@ -97,6 +104,17 @@ function App() {
     if (!result.success) return;
 
     setCurrentRoom(result.room);
+
+    const eventResult = resolveEvents(result.room.events?.onEnter, worldState);
+
+    if (eventResult.messages.length > 0) {
+      setLog((prev) => [...prev, ...eventResult.messages]);
+
+      setWorldState((prev) => ({
+        ...prev,
+        triggeredEvents: eventResult.triggeredEvents,
+      }));
+    }
   }
 
   return (
