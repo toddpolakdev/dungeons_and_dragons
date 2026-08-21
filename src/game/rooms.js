@@ -444,19 +444,81 @@ export const rooms = {
     description:
       "This is the stronghold's main dining hall, where guest banquets were once held. Tables and chairs are scattered throughout the musty room.",
 
-    examine: `The room is moderately decorated. A carved wooden mantle surrounds the room about seven feet above the floor, and simple designs have been carved into the stone walls.
-
-Most of the tables and chairs are plain hard maple, worn and in some cases overturned.
-
-Two chairs are strikingly different. These ornate walnut seats belonged to Zelligar and Rogahn and are carved directly from a massive wooden structure in the northeast corner.
-
-Greenish fungus grows across portions of the walnut. The room smells strongly of mildew and has obviously not been used for a very long time.`,
-
+    examine:
+      "The dining hall contains scattered tables and chairs, carved decoration along the walls, and two unusually ornate seats in the northeast corner.",
     exits: {
       west: "intersection",
     },
 
-    features: [],
+    features: [
+      {
+        id: "woodenMantle",
+        name: "Wooden Mantle",
+
+        description:
+          "A nicely carved wooden mantle runs around the room about seven feet above the floor. Despite the workmanship, it does not appear especially valuable.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "3. DINING ROOM",
+        },
+      },
+
+      {
+        id: "wallCarvings",
+        name: "Wall Carvings",
+
+        description:
+          "The stone walls are carved with simple but pleasant decorative designs. The decoration is modest rather than elaborate.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "3. DINING ROOM",
+        },
+      },
+
+      {
+        id: "tablesAndChairs",
+        name: "Tables and Chairs",
+
+        description:
+          "Most of the furnishings are plain, utilitarian tables and chairs made of hard maple. Several have been overturned. They show wear and have clearly not been used recently.",
+
+        dm: {
+          hidden: false,
+          valuable: false,
+          sourceArea: "3. DINING ROOM",
+        },
+      },
+
+      {
+        id: "ornateChairs",
+        name: "Ornate Chairs",
+
+        description:
+          "Two chairs stand apart from the ordinary furnishings. They are ornately carved from walnut and were the personal seats of Zelligar and Rogahn. Closer examination shows that the chairs are fixed directly into an enormous wooden structure forming part of the northeast wall, making them impossible to remove intact.",
+
+        dm: {
+          hidden: false,
+          owners: ["Zelligar", "Rogahn"],
+          removable: false,
+          sourceArea: "3. DINING ROOM",
+        },
+      },
+
+      {
+        id: "greenFungus",
+        name: "Green Fungus",
+
+        description:
+          "A greenish fungus grows across portions of the walnut seats, marring their otherwise impressive appearance. The condition of the chairs makes it obvious that they have gone unused for a long time.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "3. DINING ROOM",
+        },
+      },
+    ],
 
     dm: {
       areaType: "room",
