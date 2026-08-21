@@ -448,6 +448,7 @@ export const rooms = {
       "The dining hall contains scattered tables and chairs, carved decoration along the walls, and two unusually ornate seats in the northeast corner.",
     exits: {
       west: "intersection",
+      south: "lounge",
     },
 
     features: [
@@ -526,6 +527,101 @@ export const rooms = {
       module: "B1",
       moduleName: "In Search of the Unknown",
       sourceArea: "3. DINING ROOM",
+    },
+  },
+  lounge: {
+    id: "lounge",
+    name: "Lounge",
+
+    description:
+      "This anteroom appears to have been used for drinking and relaxation before and after meals. A life-sized white statue stands at the center of the room.",
+
+    examine:
+      "Old drinking vessels, built-in benches, strangely textured stone walls, and the central statue are the room's most noticeable features.",
+
+    exits: {
+      north: "diningRoom",
+    },
+
+    features: [
+      {
+        id: "tankards",
+        name: "Tankard Mugs",
+
+        description:
+          "Several earthenware tankard mugs hang from a row of hooks high on one wall. Many more hooks are empty, suggesting that numerous mugs are missing.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "4. LOUNGE",
+        },
+      },
+
+      {
+        id: "aleKeg",
+        name: "Ale Keg",
+
+        description:
+          "An old ale keg stands in one corner. It has long since gone dry, though a faint smell of ale still lingers around it.",
+
+        dm: {
+          hidden: false,
+          empty: true,
+          sourceArea: "4. LOUNGE",
+        },
+      },
+
+      {
+        id: "texturedWalls",
+        name: "Textured Walls",
+
+        description:
+          "The stone walls have been worked into an unusual texture for decorative effect. There are no additional markings or obvious details.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "4. LOUNGE",
+        },
+      },
+
+      {
+        id: "benches",
+        name: "Bench Seats",
+
+        description:
+          "A long wooden bench is attached to each side wall. Anyone seated there would face toward the center of the room.",
+
+        dm: {
+          hidden: false,
+          removable: false,
+          sourceArea: "4. LOUNGE",
+        },
+      },
+
+      {
+        id: "statue",
+        name: "Marble Statue",
+
+        description:
+          "At the center of the room stands a life-sized statue of a nude human woman, carved in an alluring pose with her arms extended forward. It appears to be white marble and is obviously extremely valuable. However, its enormous weight and the way it is anchored to the floor make it impossible to move by ordinary means.",
+
+        dm: {
+          hidden: false,
+          material: "white marble",
+          valueGp: 5000,
+          removable: false,
+          anchored: true,
+          sourceArea: "4. LOUNGE",
+        },
+      },
+    ],
+
+    dm: {
+      areaType: "room",
+      level: 1,
+      module: "B1",
+      moduleName: "In Search of the Unknown",
+      sourceArea: "4. LOUNGE",
     },
   },
   northPassage: {
