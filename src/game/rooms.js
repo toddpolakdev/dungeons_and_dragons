@@ -189,9 +189,17 @@ export const rooms = {
         id: "bodies",
         name: "Bodies",
 
-        description:
-          "Three of the dead appear to have been adventurers from outside the stronghold; the other two were guards. One human fighter is slumped against a wall with a broken sword. A human magic-user is impaled against a wooden section of wall by the sword that killed him. A dwarf fighter lies face down farther east, still holding a war hammer. Two human fighters who appear to have been guards lie nearby.",
+        description: `Three of the dead were adventurers from outside the stronghold, while the other two appear to have been guards.
 
+• Body #1 — A human fighter slumped against the wall. His sword is broken about eight inches above the pommel.
+
+• Body #2 — A human magic-user impaled against a wooden section of wall by the sword that killed him.
+
+• Body #3 — A dwarf fighter lying face down east of the intersection, still clutching a war hammer. A trail of dried blood leads from his body back toward the battle. An empty sack turned inside out lies beside him, and his helmet is badly dented.
+
+• Body #4 — A human berserker or fighter sprawled on the floor beside a broken wooden shield.
+
+• Body #5 — Another human berserker or fighter lying face down with his head crushed by a war-hammer blow. A small sheathed dagger remains on his ornate leather belt, although the belt is badly bloodstained.`,
         searchable: true,
 
         search:
@@ -263,8 +271,17 @@ export const rooms = {
             message:
               "You pull the sword free from the dead magic-user and the wooden wall. With nothing holding it upright, the body crumples to the floor.",
 
-            afterDescription:
-              "Three of the dead were adventurers and two were guards. The human fighter remains slumped against the wall with his broken sword. The dead magic-user now lies on the floor beneath the wooden section of wall where he had been pinned. A blood-stained carving is visible behind him. The dwarf fighter remains face down farther east with his war hammer, and the two dead guards remain nearby.",
+            afterDescription: `Three of the dead were adventurers and two were guards.
+
+• Body #1 — The human fighter remains slumped against the wall with his broken sword.
+
+• Body #2 — The dead magic-user now lies crumpled on the floor beneath the wooden section of wall where he had been pinned. A blood-stained carving is visible behind him.
+
+• Body #3 — The dwarf lies face down farther east, still clutching his war hammer. A trail of dried blood leads back toward the battle. An empty inside-out sack lies beside him, and his helmet is badly dented.
+
+• Body #4 — The human guard lies sprawled beside a broken wooden shield.
+
+• Body #5 — The other guard lies face down with a crushed head, a small sheathed dagger, and an ornate but badly bloodstained leather belt.`,
 
             discoveredSecret: {
               id: "quasqueton-carving",

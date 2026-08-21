@@ -448,6 +448,7 @@ function App() {
         .message {
           line-height: 1.55;
           margin: 8px 0;
+          white-space: pre-line;
         }
 
         .empty-message {
@@ -502,6 +503,7 @@ function App() {
         .step-message {
           margin: 5px 0 5px 58px;
           line-height: 1.5;
+          white-space: pre-line;
         }
 
         details {
@@ -723,13 +725,31 @@ function App() {
               </div>
             )}
 
-            {currentRoomDiscoveries.length > 0 && (
+            {currentRoomSecrets.length > 0 && (
               <div className="action-section">
-                <h3>Discovered</h3>
+                <h3>Secrets Discovered</h3>
 
-                {currentRoomDiscoveries.map((item) => {
-                  // ...
-                })}
+                {currentRoomSecrets.map((secret) => (
+                  <div
+                    key={secret.id}
+                    style={{
+                      marginBottom: "14px",
+                      paddingBottom: "14px",
+                      borderBottom: "1px solid #eee",
+                    }}
+                  >
+                    <strong>{secret.name}</strong>
+
+                    <div
+                      style={{
+                        marginTop: "4px",
+                        lineHeight: "1.5",
+                      }}
+                    >
+                      {secret.description}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
