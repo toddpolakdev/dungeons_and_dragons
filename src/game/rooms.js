@@ -40,7 +40,6 @@ export const rooms = {
       sourceArea: "ENTRANCE",
     },
   },
-
   firstAlcoves: {
     id: "firstAlcoves",
     name: "Entrance Passage — First Alcoves",
@@ -78,7 +77,6 @@ export const rooms = {
       sourceArea: "1. ALCOVES",
     },
   },
-
   secondAlcoves: {
     id: "secondAlcoves",
     name: "Entrance Passage — Second Alcoves",
@@ -123,7 +121,6 @@ export const rooms = {
       sourceArea: "1. ALCOVES",
     },
   },
-
   thirdAlcoves: {
     id: "thirdAlcoves",
     name: "Entrance Passage — Third Alcoves",
@@ -166,7 +163,6 @@ export const rooms = {
       magicMouthTrigger: "betweenAlcoves",
     },
   },
-
   intersection: {
     id: "intersection",
     name: "Battle-Site Intersection",
@@ -177,11 +173,11 @@ export const rooms = {
     examine:
       "Five combatants died here. Their remains are in various states of decomposition, and the stench is strong.",
 
-    // We have not built the destinations north/east/west yet.
-    // Do not create fake room destinations simply to make
-    // buttons appear.
     exits: {
       south: "thirdAlcoves",
+      north: "northPassage",
+      west: "kitchen",
+      east: "diningRoom",
     },
 
     features: [
@@ -321,10 +317,176 @@ export const rooms = {
       level: 1,
       module: "B1",
       moduleName: "In Search of the Unknown",
+    },
+  },
+  kitchen: {
+    id: "kitchen",
+    name: "Kitchen",
 
-      // They physically exist according to B1.
-      // We simply haven't implemented their destinations yet.
-      unimplementedExits: ["north", "east", "west"],
+    description:
+      "This very long room was used for food preparation. Two large cooking pits occupy the southwest corner, while long tables line the walls.",
+
+    examine:
+      "The room contains two large cooking pits, long tables covered with old containers and spoiled food, hanging and scattered cooking utensils, and a large cast-iron kettle suspended from the ceiling.",
+
+    exits: {
+      east: "intersection",
+    },
+
+    features: [
+      {
+        id: "cookingPits",
+        name: "Cooking Pits",
+
+        description:
+          "Two cooking pits occupy the southwest corner. Each is large enough to cook an animal as large as a deer. One is slightly larger than the other, but both are about three feet deep and filled with ash and the charred remains of cooking fuel.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "2. KITCHEN",
+        },
+      },
+
+      {
+        id: "chimney",
+        name: "Chimney",
+
+        description:
+          "A chimney rises from the cooking area, but its opening is too small to permit further investigation.",
+
+        dm: {
+          hidden: false,
+          traversable: false,
+          sourceArea: "2. KITCHEN",
+        },
+      },
+
+      {
+        id: "tables",
+        name: "Tables",
+
+        description:
+          "Long tables line the walls. Scattered containers sit upon them, some overturned, with their spoiled contents moldering across the tabletops.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "2. KITCHEN",
+        },
+      },
+
+      {
+        id: "spoiledFood",
+        name: "Spoiled Food",
+
+        description:
+          "Spoiled pieces of food are scattered around the room. The smell is extremely uninviting.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "2. KITCHEN",
+        },
+      },
+
+      {
+        id: "moldyCheese",
+        name: "Moldy Cheese",
+
+        description:
+          "One particularly noxious chunk of moldy cheese is completely covered by a fuzzy green growth.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "2. KITCHEN",
+        },
+      },
+
+      {
+        id: "utensils",
+        name: "Cooking Utensils",
+
+        description:
+          "Pots, pans, and other cooking utensils of various sizes hang from above or lie scattered across the floor.",
+
+        dm: {
+          hidden: false,
+          valuable: false,
+          sourceArea: "2. KITCHEN",
+        },
+      },
+
+      {
+        id: "kettle",
+        name: "Cast-Iron Kettle",
+
+        description:
+          "A large cast-iron kettle hangs from the ceiling by a thick chain. The kettle is empty.",
+
+        dm: {
+          hidden: false,
+          empty: true,
+          sourceArea: "2. KITCHEN",
+        },
+      },
+    ],
+
+    dm: {
+      areaType: "room",
+      level: 1,
+      module: "B1",
+      moduleName: "In Search of the Unknown",
+      sourceArea: "2. KITCHEN",
+    },
+  },
+  diningRoom: {
+    id: "diningRoom",
+    name: "Dining Room",
+
+    description:
+      "This is the stronghold's main dining hall, where guest banquets were once held. Tables and chairs are scattered throughout the musty room.",
+
+    examine: `The room is moderately decorated. A carved wooden mantle surrounds the room about seven feet above the floor, and simple designs have been carved into the stone walls.
+
+Most of the tables and chairs are plain hard maple, worn and in some cases overturned.
+
+Two chairs are strikingly different. These ornate walnut seats belonged to Zelligar and Rogahn and are carved directly from a massive wooden structure in the northeast corner.
+
+Greenish fungus grows across portions of the walnut. The room smells strongly of mildew and has obviously not been used for a very long time.`,
+
+    exits: {
+      west: "intersection",
+    },
+
+    features: [],
+
+    dm: {
+      areaType: "room",
+      level: 1,
+      module: "B1",
+      moduleName: "In Search of the Unknown",
+      sourceArea: "3. DINING ROOM",
+    },
+  },
+  northPassage: {
+    id: "northPassage",
+    name: "North Passage",
+
+    description:
+      "The corridor continues north from the battle-site intersection into the interior of the stronghold.",
+
+    examine: "The finished stone passage continues farther into Quasqueton.",
+
+    exits: {
+      south: "intersection",
+    },
+
+    features: [],
+
+    dm: {
+      areaType: "corridor",
+      level: 1,
+      module: "B1",
+      moduleName: "In Search of the Unknown",
+      sourceArea: "Upper-level map — north of entrance intersection",
     },
   },
 };
