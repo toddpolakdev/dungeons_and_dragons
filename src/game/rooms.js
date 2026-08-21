@@ -635,6 +635,7 @@ export const rooms = {
 
     exits: {
       south: "intersection",
+      east: "wizardChamber",
     },
 
     features: [],
@@ -645,6 +646,130 @@ export const rooms = {
       module: "B1",
       moduleName: "In Search of the Unknown",
       sourceArea: "Upper-level map — north of entrance intersection",
+    },
+  },
+  wizardChamber: {
+    id: "wizardChamber",
+    name: "Wizard's Chamber",
+
+    description:
+      "This austere chamber was Zelligar's personal room. A huge stone carving dominates the north wall, while an ornate rosewood bed stands in the southeast corner.",
+
+    examine:
+      "The chamber contains a massive wall carving, several wall pegs, Zelligar's ornate bed, a rosewood nightstand, and a simple table with three chairs.",
+
+    exits: {
+      west: "northPassage",
+    },
+
+    features: [
+      {
+        id: "wallCarving",
+        name: "Wall Carving",
+
+        description:
+          "A detailed stone carving stretches for roughly seventy feet along the north wall. It depicts a mighty wizard, obviously Zelligar, standing upon a hilltop and casting a spell over the valley below while an entire army flees in panic.",
+
+        dm: {
+          hidden: false,
+          depicts: "Zelligar",
+          sourceArea: "5. WIZARD'S CHAMBER",
+        },
+      },
+
+      {
+        id: "wallPegs",
+        name: "Wall Pegs",
+
+        description:
+          "Several pegs are fixed to the otherwise bare east and west walls. They appear to have once been used for hanging garments.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "5. WIZARD'S CHAMBER",
+        },
+      },
+
+      {
+        id: "rosewoodBed",
+        name: "Rosewood Bed",
+
+        description:
+          "The bed is made from ornately carved rosewood and is exceptionally well constructed. Its headboard boldly displays Zelligar's name in gold leaf. The heavy frame is too sturdy to remove intact without first dismantling it.",
+
+        dm: {
+          hidden: false,
+          owner: "Zelligar",
+          material: "rosewood",
+          removableIntact: false,
+
+          dismantledValueGp: {
+            baseboard: 100,
+            eachSide: 100,
+            headboard: 500,
+          },
+
+          sourceArea: "5. WIZARD'S CHAMBER",
+        },
+      },
+
+      {
+        id: "nightstand",
+        name: "Rosewood Nightstand",
+
+        description:
+          "A rosewood nightstand stands beside the bed. It has a single drawer with a brass handle. The drawer is locked.",
+
+        dm: {
+          hidden: false,
+          locked: true,
+          trapped: true,
+          sourceArea: "5. WIZARD'S CHAMBER",
+
+          trap: {
+            type: "pinTrap",
+            trigger: "graspHandle",
+            damage: 1,
+            painfulOil: true,
+            handUnusableTurns: "1d4+1",
+          },
+        },
+      },
+
+      {
+        id: "tableAndChairs",
+        name: "Table and Chairs",
+
+        description:
+          "A plain table and three ordinary chairs furnish another part of the chamber. They are not of exceptional value.",
+
+        dm: {
+          hidden: false,
+          valuable: false,
+          sourceArea: "5. WIZARD'S CHAMBER",
+        },
+      },
+
+      {
+        id: "pewterware",
+        name: "Pewterware",
+
+        description:
+          "A pewter pitcher and three pewter mugs sit upon the table. The pitcher is worth about 15 gold pieces, while each mug is worth about 5 gold pieces.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "5. WIZARD'S CHAMBER",
+        },
+      },
+    ],
+
+    dm: {
+      areaType: "room",
+      level: 1,
+      module: "B1",
+      moduleName: "In Search of the Unknown",
+      sourceArea: "5. WIZARD'S CHAMBER",
     },
   },
 };
