@@ -1,19 +1,32 @@
 import { useState } from "react";
-
 import "./TestPage.css";
-
 import { attack } from "../game/combat";
-import { createPlayer, createGoblin } from "../game/characters";
+import {
+  createPlayer,
+  createTestThief,
+  createGoblin,
+} from "../game/characters";
 import { GAME_STATES } from "../game/gameState";
 import { rooms } from "../game/rooms";
 import { move } from "../game/movement";
 import { createWorldState } from "../game/worldState";
 import { resolveEvents } from "../game/eventResolver";
-
 import RoomPanel from "../components/RoomPanel";
 import LatestStep from "../components/LatestStep";
 import StepLog from "../components/StepLog";
 import DebugPanel from "../components/DebugPanel";
+import DungeonMap from "../components/DungeonMap";
+import NarrationPanel from "../components/NarrationPanel";
+import { rollFormula, rollPercentile } from "../game/dice";
+import {
+  canPickLock,
+  getContainerKey,
+  getLockAttemptKey,
+  getLockKey,
+  isLocked,
+  isOpen,
+} from "../game/locks";
+import { getTrapKey } from "../game/traps";
 
 /**
  * The development / testing UI for the B1 adventure.
@@ -24,14 +37,22 @@ import DebugPanel from "../components/DebugPanel";
  * rather than by dismantling it.
  */
 export default function TestPage() {
-  const [player, setPlayer] = useState(createPlayer());
+  // const [player, setPlayer] = useState(createPlayer());
+  const [player, setPlayer] = useState(createTestThief());
   const [enemy, setEnemy] = useState(createGoblin());
   const [steps, setSteps] = useState([]);
   const [gameState, setGameState] = useState(GAME_STATES.EXPLORING);
   const [currentRoom, setCurrentRoom] = useState(rooms.entrance);
   const [worldState, setWorldState] = useState(createWorldState());
+  const [visitedRoomIds, setVisitedRoomIds] = useState([rooms.entrance.id]);
+  const [mapOpen, setMapOpen] = useState(true);
+
+  // Map calibration picks live here, not inside DungeonMap, so closing the
+  // floating panel does not throw away a calibration pass.
+  const [mapPicks, setMapPicks] = useState({});
 
   const latestStep = steps[steps.length - 1];
+  const latestNarration = latestStep?.messages?.join(" ") ?? "";
 
   function addStep(title, messages) {
     const messageList = Array.isArray(messages) ? messages : [messages];
@@ -88,11 +109,13 @@ export default function TestPage() {
   }
 
   function handleNewGame() {
-    setPlayer(createPlayer());
+    // setPlayer(createPlayer());
+    setPlayer(createTestThief());
     setEnemy(createGoblin());
     setSteps([]);
     setCurrentRoom(rooms.entrance);
     setWorldState(createWorldState());
+    setVisitedRoomIds([rooms.entrance.id]);
     setGameState(GAME_STATES.EXPLORING);
   }
 
@@ -112,6 +135,7 @@ export default function TestPage() {
 
     let description = feature.description;
 
+    // First apply any description changes caused by completed interactions.
     for (const interaction of feature.interactions ?? []) {
       const interactionKey = `${currentRoom.id}:${feature.id}:${interaction.id}`;
 
@@ -120,6 +144,31 @@ export default function TestPage() {
         interaction.afterDescription
       ) {
         description = interaction.afterDescription;
+      }
+    }
+
+    // Then let the feature's CURRENT container/lock state win.
+    // This prevents an opened drawer from later describing itself
+    // using the original "locked" text.
+    if (feature.container) {
+      const open = isOpen({
+        worldState,
+        roomId: currentRoom.id,
+        featureId: feature.id,
+        container: feature.container,
+      });
+
+      const locked = isLocked({
+        worldState,
+        roomId: currentRoom.id,
+        featureId: feature.id,
+        lock: feature.lock,
+      });
+
+      if (open && feature.openDescription) {
+        description = feature.openDescription;
+      } else if (!locked && feature.unlockedDescription) {
+        description = feature.unlockedDescription;
       }
     }
 
@@ -243,6 +292,32 @@ export default function TestPage() {
 
     const messages = [interaction.message];
 
+    let damage = 0;
+    let activeEffect = null;
+
+    if (interaction.effects?.damage) {
+      damage = rollFormula(interaction.effects.damage);
+
+      messages.push(
+        `You take ${damage} point${damage === 1 ? "" : "s"} of damage.`,
+      );
+    }
+
+    if (interaction.effects?.condition) {
+      const durationTurns = rollFormula(interaction.effects.condition.duration);
+
+      activeEffect = {
+        ...interaction.effects.condition,
+        durationTurns,
+        roomId: currentRoom.id,
+        featureId: feature.id,
+      };
+
+      messages.push(
+        `${activeEffect.name}: ${activeEffect.description} (${durationTurns} turns).`,
+      );
+    }
+
     if (discoveredSecret) {
       messages.push(discoveredSecret.description);
     }
@@ -254,6 +329,20 @@ export default function TestPage() {
     }
 
     addStep(interaction.name, messages);
+
+    if (damage > 0) {
+      const updatedPlayer = {
+        ...player,
+        hp: Math.max(0, player.hp - damage),
+      };
+
+      setPlayer(updatedPlayer);
+
+      if (updatedPlayer.hp <= 0) {
+        setGameState(GAME_STATES.GAME_OVER);
+        messages.push(`${player.name} has been defeated!`);
+      }
+    }
 
     setWorldState((prev) => ({
       ...prev,
@@ -275,7 +364,214 @@ export default function TestPage() {
         !prev.discoveredItems.some((item) => item.id === discoveredItem.id)
           ? [...prev.discoveredItems, discoveredItem]
           : prev.discoveredItems,
+
+      activeEffects:
+        activeEffect &&
+        !prev.activeEffects.some(
+          (effect) =>
+            effect.id === activeEffect.id &&
+            effect.roomId === activeEffect.roomId &&
+            effect.featureId === activeEffect.featureId,
+        )
+          ? [...prev.activeEffects, activeEffect]
+          : prev.activeEffects,
     }));
+  }
+
+  function handleOpenContainer(feature) {
+    if (gameState !== GAME_STATES.EXPLORING) return;
+
+    const container = feature.container;
+
+    if (!container) return;
+
+    // Once open, using Open again should not re-grasp
+    // the trapped handle.
+    const alreadyOpen = isOpen({
+      worldState,
+      roomId: currentRoom.id,
+      featureId: feature.id,
+      container,
+    });
+
+    if (alreadyOpen) {
+      addStep(`Open: ${container.name}`, [
+        `The ${container.name.toLowerCase()} is already open.`,
+      ]);
+
+      return;
+    }
+
+    const messages = [];
+
+    let damage = 0;
+    let activeEffect = null;
+    let trapKey = null;
+
+    // Opening this container requires grasping its handle,
+    // which is what triggers Zelligar's trap.
+    if (feature.trap) {
+      const trap = feature.trap;
+
+      trapKey = getTrapKey(currentRoom.id, feature.id, trap.id);
+
+      messages.push(trap.message);
+
+      if (trap.damage) {
+        damage = rollFormula(trap.damage);
+
+        messages.push(
+          `You take ${damage} point${damage === 1 ? "" : "s"} of damage.`,
+        );
+      }
+
+      if (trap.condition) {
+        const durationTurns = rollFormula(trap.condition.duration);
+
+        activeEffect = {
+          ...trap.condition,
+          durationTurns,
+          roomId: currentRoom.id,
+          featureId: feature.id,
+          trapId: trap.id,
+        };
+
+        messages.push(
+          `${activeEffect.name}: ${activeEffect.description} (${durationTurns} turns).`,
+        );
+      }
+    }
+
+    // The handle has now been grasped. Check whether
+    // the lock actually permits the drawer to open.
+    const locked = isLocked({
+      worldState,
+      roomId: currentRoom.id,
+      featureId: feature.id,
+      lock: feature.lock,
+    });
+
+    let containerKey = null;
+
+    if (locked) {
+      messages.push(
+        feature.lock?.lockedMessage ??
+          `The ${container.name.toLowerCase()} is locked.`,
+      );
+    } else {
+      containerKey = getContainerKey(currentRoom.id, feature.id, container.id);
+
+      messages.push(
+        container.openMessage ??
+          `You open the ${container.name.toLowerCase()}.`,
+      );
+    }
+
+    if (damage > 0) {
+      const updatedPlayer = {
+        ...player,
+        hp: Math.max(0, player.hp - damage),
+      };
+
+      setPlayer(updatedPlayer);
+
+      if (updatedPlayer.hp <= 0) {
+        setGameState(GAME_STATES.GAME_OVER);
+        messages.push(`${player.name} has been defeated!`);
+      }
+    }
+
+    setWorldState((prev) => {
+      let activeEffects = prev.activeEffects;
+
+      if (activeEffect) {
+        // Re-triggering the same effect refreshes its duration
+        // rather than creating duplicate entries.
+        activeEffects = [
+          ...prev.activeEffects.filter(
+            (effect) =>
+              !(
+                effect.id === activeEffect.id &&
+                effect.roomId === activeEffect.roomId &&
+                effect.featureId === activeEffect.featureId
+              ),
+          ),
+          activeEffect,
+        ];
+      }
+
+      return {
+        ...prev,
+
+        triggeredTraps:
+          trapKey && !prev.triggeredTraps.includes(trapKey)
+            ? [...prev.triggeredTraps, trapKey]
+            : prev.triggeredTraps,
+
+        activeEffects,
+
+        openedContainers:
+          containerKey && !prev.openedContainers.includes(containerKey)
+            ? [...prev.openedContainers, containerKey]
+            : prev.openedContainers,
+      };
+    });
+
+    addStep(`Open: ${container.name}`, messages);
+  }
+
+  function handlePickLock(feature) {
+    if (gameState !== GAME_STATES.EXPLORING) return;
+
+    const lock = feature.lock;
+
+    if (!lock) return;
+
+    const allowed = canPickLock({
+      player,
+      worldState,
+      roomId: currentRoom.id,
+      featureId: feature.id,
+      lock,
+    });
+
+    if (!allowed) {
+      return;
+    }
+
+    const chance = player.thiefSkills.openLocks;
+    const roll = rollPercentile();
+    const success = roll <= chance;
+
+    const lockKey = getLockKey(currentRoom.id, feature.id, lock.id);
+
+    const attemptKey = getLockAttemptKey({
+      player,
+      roomId: currentRoom.id,
+      featureId: feature.id,
+      lock,
+    });
+
+    setWorldState((prev) => ({
+      ...prev,
+
+      attemptedLocks: prev.attemptedLocks.includes(attemptKey)
+        ? prev.attemptedLocks
+        : [...prev.attemptedLocks, attemptKey],
+
+      unlockedLocks:
+        success && !prev.unlockedLocks.includes(lockKey)
+          ? [...prev.unlockedLocks, lockKey]
+          : prev.unlockedLocks,
+    }));
+
+    addStep(`Pick Lock: ${feature.name}`, [
+      `You work on the lock with your thieves' tools.`,
+      `Open Locks: ${roll}% vs. ${chance}% — ${
+        success ? "SUCCESS" : "FAILURE"
+      }.`,
+      success ? "The lock clicks open." : "You are unable to open the lock.",
+    ]);
   }
 
   function handleMove(direction) {
@@ -289,6 +585,10 @@ export default function TestPage() {
     }
 
     setCurrentRoom(result.room);
+
+    setVisitedRoomIds((prev) =>
+      prev.includes(result.room.id) ? prev : [...prev, result.room.id],
+    );
 
     const messages = [result.message];
 
@@ -310,7 +610,8 @@ export default function TestPage() {
     <main className="app">
       <header className="header">
         <div>
-          <h1>D&D Adventure</h1>
+          <h1>Dungeon Module B1</h1>
+          <h1>In Search of the Unknown</h1>
 
           <div className="status-row">
             <span className="status">
@@ -334,7 +635,13 @@ export default function TestPage() {
           )}
         </div>
 
-        <button onClick={handleNewGame}>New Game</button>
+        <div className="header-actions">
+          <button onClick={() => setMapOpen((open) => !open)}>
+            {mapOpen ? "Hide Map" : "Show Map"}
+          </button>
+
+          <button onClick={handleNewGame}>New Game</button>
+        </div>
       </header>
 
       <div className="layout">
@@ -348,6 +655,8 @@ export default function TestPage() {
           onExamineFeature={handleExamineFeature}
           onSearchFeature={handleSearchFeature}
           onInteraction={handleInteraction}
+          onOpenContainer={handleOpenContainer}
+          onPickLock={handlePickLock}
           onMove={handleMove}
           onTakeItem={handleTakeItem}
           onAttack={handleAttack}
@@ -358,7 +667,20 @@ export default function TestPage() {
 
       <StepLog steps={steps} />
 
+      <NarrationPanel />
+
       <DebugPanel worldState={worldState} />
+
+      {mapOpen && (
+        <DungeonMap
+          rooms={rooms}
+          currentRoomId={currentRoom.id}
+          visitedRoomIds={visitedRoomIds}
+          picks={mapPicks}
+          onPicksChange={setMapPicks}
+          onClose={() => setMapOpen(false)}
+        />
+      )}
     </main>
   );
 }

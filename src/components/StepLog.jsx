@@ -2,8 +2,14 @@ import GameText from "./GameText";
 
 export default function StepLog({ steps }) {
   return (
-    <section className="panel history">
-      <h2>Game History</h2>
+    <details className="panel history" open>
+      <summary>
+        <span className="summary-title">Game History</span>
+
+        <span className="summary-note">
+          {steps.length === 1 ? "1 step" : `${steps.length} steps`}
+        </span>
+      </summary>
 
       {steps.length === 0 ? (
         <p className="empty-message">No actions have been taken yet.</p>
@@ -24,6 +30,6 @@ export default function StepLog({ steps }) {
           </div>
         ))
       )}
-    </section>
+    </details>
   );
 }

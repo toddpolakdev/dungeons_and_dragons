@@ -1,0 +1,27 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Map load test</title>
+<style>
+  body { font: 16px system-ui; margin: 24px; }
+  img { max-width: 600px; display: block; border: 1px solid #ccc; }
+  #log { font-family: monospace; white-space: pre-line; margin-bottom: 16px; }
+</style>
+<h1>Map load test — no React</h1>
+<div id="log">loading…</div>
+<img id="m" src="/maps/upper-level.png" alt="upper level" />
+<script>
+  const log = document.getElementById("log");
+  const img = document.getElementById("m");
+  const started = performance.now();
+
+  img.addEventListener("load", () => {
+    log.textContent =
+      "LOADED ok\n" +
+      img.naturalWidth + " x " + img.naturalHeight + " px\n" +
+      Math.round(performance.now() - started) + " ms";
+  });
+
+  img.addEventListener("error", () => {
+    log.textContent = "ERROR event fired";
+  });
+</script>

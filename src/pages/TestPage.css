@@ -258,10 +258,6 @@
   margin-top: 20px;
 }
 
-.history h2 {
-  margin: 0 0 14px;
-}
-
 .step {
   padding: 14px 0;
   border-top: 1px solid var(--rule-step);
@@ -339,5 +335,349 @@
 
   .step-body {
     margin-left: 0;
+  }
+}
+
+/* ---------- Dev map ---------- */
+
+/*
+ * Marker colours here are functional dev-tool signalling, not a product palette:
+ * this panel is an inspection aid and is not part of the player-facing design.
+ */
+
+.map-panel {
+  margin-top: 20px;
+}
+
+.panel > summary {
+  cursor: pointer;
+}
+
+.panel[open] > summary {
+  margin-bottom: 12px;
+}
+
+.summary-title {
+  font-size: 24px;
+  font-weight: 500;
+  margin-right: 12px;
+}
+
+.summary-note {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.map-note {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.map-warning {
+  display: block;
+  margin-top: 10px;
+}
+
+.map-frame {
+  position: relative;
+  line-height: 0;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.map-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.map-frame--picking {
+  cursor: crosshair;
+}
+
+.map-trail {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.map-trail polyline {
+  fill: none;
+  stroke: #c8102e;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.75;
+}
+
+.map-pin {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #c8102e;
+  pointer-events: none;
+}
+
+.map-pin--current {
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  background: #c8102e;
+  box-shadow: 0 0 0 4px rgba(200, 16, 46, 0.25);
+}
+
+.map-pin--picked {
+  background: #111;
+  border-color: #111;
+}
+
+.map-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.map-controls select {
+  padding: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--button-border);
+  background: var(--button-bg);
+  color: var(--text);
+}
+
+.map-snippet {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.map-snippet code {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 13px;
+  background: var(--rule-soft);
+  padding: 6px 9px;
+  border-radius: var(--radius-xs);
+}
+
+.map-levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.map-level--active {
+  background: var(--button-strong-bg);
+  color: #fff;
+  border-color: var(--button-strong-bg);
+}
+
+.map-level--active:hover:not(:disabled) {
+  background: var(--button-strong-hover);
+}
+
+.map-picker {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule-soft);
+}
+
+.map-picker-target {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.map-pin--target {
+  background: #111;
+  border-color: #fff;
+  box-shadow: 0 0 0 2px #111;
+}
+
+.map-pin-label {
+  position: absolute;
+  left: 14px;
+  top: -2px;
+  white-space: nowrap;
+  font-size: 11px;
+  line-height: 1.2;
+  padding: 2px 5px;
+  border-radius: var(--radius-xs);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+}
+
+.map-readout {
+  margin-top: 10px;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ---------- Narration ---------- */
+
+.narration-panel {
+  margin-top: 20px;
+}
+
+.narration-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.narration-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.narration-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-soft);
+}
+
+.narration-field select,
+.narration-sample textarea {
+  padding: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--button-border);
+  background: var(--button-bg);
+  color: var(--text);
+}
+
+.narration-sample {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.narration-sample textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+.voice-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  max-height: 320px;
+  overflow-y: auto;
+  border-top: 1px solid var(--rule-soft);
+}
+
+.voice-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.voice-name {
+  flex: 1 1 200px;
+  text-align: left;
+}
+
+.voice-name.is-active {
+  background: var(--button-strong-bg);
+  color: #fff;
+  border-color: var(--button-strong-bg);
+}
+
+.voice-name.is-active:hover:not(:disabled) {
+  background: var(--button-strong-hover);
+}
+
+/* ---------- Floating panel ---------- */
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.floating-panel {
+  position: fixed;
+  z-index: 50;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+}
+
+.floating-bar {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--chip-bg);
+  border-bottom: 1px solid var(--panel-border);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.floating-bar:active {
+  cursor: grabbing;
+}
+
+.floating-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.floating-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.floating-actions button {
+  padding: 2px 9px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/*
+ * The body carries the resize handle, so dragging its corner resizes the whole
+ * window. The panel itself is shrink-to-fit around it.
+ */
+.floating-body {
+  width: 560px;
+  height: 66vh;
+  max-width: calc(100vw - 34px);
+  padding: 16px;
+  overflow: auto;
+  resize: both;
+}
+
+@media (max-width: 760px) {
+  .floating-body {
+    width: calc(100vw - 34px);
+    height: 60vh;
   }
 }

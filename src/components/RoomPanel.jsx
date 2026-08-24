@@ -2,6 +2,7 @@ import { GAME_STATES } from "../game/gameState";
 import ActionBar from "./ActionBar";
 import Discoveries from "./Discoveries";
 import GameText from "./GameText";
+import SpeakButton from "../components/SpeakButton";
 
 export default function RoomPanel({
   room,
@@ -13,9 +14,11 @@ export default function RoomPanel({
   onExamineFeature,
   onSearchFeature,
   onInteraction,
+  onOpenContainer,
   onMove,
   onTakeItem,
   onAttack,
+  onPickLock,
 }) {
   const discoveries = worldState.discoveredItems.filter(
     (item) => item.roomId === room.id,
@@ -33,14 +36,19 @@ export default function RoomPanel({
         <GameText text={room.description} />
       </div>
 
+      <SpeakButton text={room.description} label="🔊 Read Room Description" />
+
       {gameState === GAME_STATES.EXPLORING && (
         <ActionBar
           room={room}
+          player={player}
           worldState={worldState}
           onExamineRoom={onExamineRoom}
           onExamineFeature={onExamineFeature}
           onSearchFeature={onSearchFeature}
           onInteraction={onInteraction}
+          onOpenContainer={onOpenContainer}
+          onPickLock={onPickLock}
           onMove={onMove}
         />
       )}

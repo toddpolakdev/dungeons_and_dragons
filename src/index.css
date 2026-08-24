@@ -89,3 +89,15 @@ button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
+
+.speech-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.speech-controls button {
+  padding: 7px 10px;
+  font-size: 13px;
+}

@@ -1,4 +1,6 @@
+import { Fragment } from "react";
 import GameText from "./GameText";
+import SpeakButton from "../components/SpeakButton";
 
 export default function LatestStep({ step }) {
   return (
@@ -12,7 +14,10 @@ export default function LatestStep({ step }) {
           </h2>
 
           {step.messages.map((message, index) => (
-            <GameText key={index} text={message} />
+            <Fragment key={index}>
+              <GameText text={message} />
+              <SpeakButton text={message} label="🔊 Read Latest Narration" />
+            </Fragment>
           ))}
         </>
       ) : (

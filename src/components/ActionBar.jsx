@@ -1,3 +1,4 @@
+import { canPickLock } from "../game/locks";
 /**
  * Available interactions for one feature: not already completed, and unlocked if
  * the interaction requires the feature to have been examined first.
@@ -9,8 +10,7 @@ function availableInteractions(room, feature, worldState) {
   return (feature.interactions ?? []).filter((interaction) => {
     const interactionKey = `${featureKey}:${interaction.id}`;
 
-    const completed =
-      worldState.completedInteractions.includes(interactionKey);
+    const completed = worldState.completedInteractions.includes(interactionKey);
 
     const requirementsMet = !interaction.requiresExamination || examined;
 
@@ -20,11 +20,14 @@ function availableInteractions(room, feature, worldState) {
 
 export default function ActionBar({
   room,
+  player,
   worldState,
   onExamineRoom,
   onExamineFeature,
   onSearchFeature,
   onInteraction,
+  onOpenContainer,
+  onPickLock,
   onMove,
 }) {
   return (
@@ -42,6 +45,17 @@ export default function ActionBar({
 
         {room.features?.map((feature) => {
           const interactions = availableInteractions(room, feature, worldState);
+          const featureKey = `${room.id}:${feature.id}`;
+          const examined = worldState.examinedFeatures.includes(featureKey);
+          const lockPickAvailable =
+            examined &&
+            canPickLock({
+              player,
+              worldState,
+              roomId: room.id,
+              featureId: feature.id,
+              lock: feature.lock,
+            });
 
           return (
             <div className="action-group" key={feature.id}>
@@ -56,12 +70,19 @@ export default function ActionBar({
                   Gate on `search` as well as `searchable`: the handler bails out
                   without one, so a feature missing it would render a dead button.
                 */}
+
                 {feature.searchable && feature.search && (
                   <button
                     className="search-button"
                     onClick={() => onSearchFeature(feature)}
                   >
                     Search
+                  </button>
+                )}
+
+                {feature.container && examined && (
+                  <button onClick={() => onOpenContainer(feature)}>
+                    Open {feature.container.name}
                   </button>
                 )}
 
@@ -73,6 +94,10 @@ export default function ActionBar({
                     {interaction.name}
                   </button>
                 ))}
+
+                {lockPickAvailable && (
+                  <button onClick={() => onPickLock(feature)}>Pick Lock</button>
+                )}
               </div>
             </div>
           );

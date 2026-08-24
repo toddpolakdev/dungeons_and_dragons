@@ -8,5 +8,10 @@ export function createWorldState() {
     completedEncounters: [],
     discoveredSecrets: [],
     collectedItems: [],
+    activeEffects: [],
+    unlockedLocks: [],
+    openedContainers: [],
+    attemptedLocks: [],
+    triggeredTraps: [],
   };
 }

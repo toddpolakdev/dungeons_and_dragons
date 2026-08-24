@@ -720,6 +720,57 @@ export const rooms = {
         description:
           "A rosewood nightstand stands beside the bed. It has a single drawer with a brass handle. The drawer is locked.",
 
+        unlockedDescription:
+          "A rosewood nightstand stands beside the bed. Its single drawer is unlocked but remains closed.",
+
+        openDescription:
+          "A rosewood nightstand stands beside the bed. Its single drawer stands open. The drawer is empty.",
+
+        lock: {
+          id: "drawer-lock",
+          initiallyLocked: true,
+
+          lockedMessage: "The drawer is locked and will not open.",
+        },
+
+        container: {
+          id: "drawer",
+          name: "Drawer",
+
+          openMessage: "The drawer slides open. It is empty.",
+
+          empty: true,
+        },
+
+        trap: {
+          id: "drawer-handle-pins",
+          trigger: "graspHandle",
+
+          message:
+            "As you grasp the brass handle, concealed pins spring into your hand.",
+
+          damage: 1,
+
+          condition: {
+            id: "painful-hand",
+            name: "Painful Hand",
+            duration: "1d4+1",
+
+            description:
+              "The injured hand is unusable because of the intense pain caused by the oily pins.",
+
+            isPoison: false,
+          },
+
+          // B1: inserting any comparably sized key before
+          // grasping the handle negates the trap.
+          // We are recording that rule now; key interaction
+          // itself can be implemented later.
+          bypass: {
+            type: "comparableKeyInserted",
+          },
+        },
+
         dm: {
           hidden: false,
           locked: true,
