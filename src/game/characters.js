@@ -30,7 +30,7 @@ export const createTestThief = () => ({
   equipment: ["thieves-tools"],
 
   thiefSkills: {
-    openLocks: 100,
+    openLocks: 15,
     findTraps: 10,
     removeTraps: 10,
   },
