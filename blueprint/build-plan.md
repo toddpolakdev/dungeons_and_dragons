@@ -120,9 +120,8 @@ refresh the overview, and then write the feature spec.
 Deferred by Todd, not cancelled and not deprioritized on merit. These are the
 **engine**-heavy items, and Todd and ChatGPT own the engine.
 
-`/feature` should skip this section. The next unchecked item is the first one
-under Next, not item 12. Move an item back up to Next when it is ready to be
-worked, keeping its number.
+`/feature` should skip this section and take the first unchecked item under Next.
+Move an item back up to Next when it is ready to be worked, keeping its number.
 
 - [ ] 13. **Combat integration** (ChatGPT / Todd) - make the `COMBAT` state
       actually reachable from B1 encounters instead of a manual toggle, and hand

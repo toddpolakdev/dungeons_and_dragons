@@ -24,7 +24,7 @@ fidelity. See `docs/00_README.md`.
 
 ## Users
 
-One user type, no accounts, no access tiers.
+One user type, no accounts today, no access tiers.
 
 - **Solo player** - wants to play B1 directly, without a DM and without a group.
 
@@ -35,7 +35,11 @@ dashboard.
 legitimately obtained by entering an area, observing it, examining or searching,
 triggering an event, interacting with an object, or otherwise satisfying the
 relevant condition. The presence of data in a room object is never a reason to
-display it.
+display it. Item 20 turns this from a UI rule into a data boundary; see the Data
+model section.
+
+> `project-plan.md` section 5 notes "no authentication system yet." Saved games
+> (item 19) usually imply an identity to save against. Not yet decided.
 
 ## Features
 
@@ -59,7 +63,8 @@ Shipped before Blueprint adoption (items 1 to 10):
 9. **Wizard chamber, locks and traps** - locked container, thief lock-picking
    gated on class, tools, skill, and a single attempt; trap keys.
 10. **Narration and developer map panel** - Web Speech API read-aloud, plus a
-    floating panel pinning rooms onto the module map scans.
+    floating panel pinning rooms onto the module map scans. The speech synthesis
+    here is **interim**, not the AI narrator of item 20.
 
 Active queue:
 
@@ -70,28 +75,36 @@ Active queue:
 16. **Player-facing UI** (Claude) - the real presentation layer, replacing the harness.
 17. **TypeScript migration** (unassigned) - convert the codebase to TypeScript.
 
-On hold (engine-heavy, deferred by Todd):
+On hold:
 
 13. **Combat integration** - make `COMBAT` reachable from B1 encounters.
 14. **Wandering monsters** - B1 check cadence and table, plus the turn model.
 18. **B1 lower level** - the second half of Quasqueton.
-19. **AI Dungeon Master / narrator** - an AI narration and interaction layer over
-    the deterministic engine. The engine stays authoritative for B1 content, rules,
-    state, dice, discoveries, encounters, inventory, and legal actions; the AI
-    narrates results and translates conversational input into supported actions.
-    A safe structured context and result boundary is defined before any
-    conversational input or generated narration is added.
+19. **Backend and persistence foundation** (Todd / ChatGPT) - the server and API
+    boundary, environment-variable configuration, database integration, and the
+    persistence model for authored content, saved game state, and later AI
+    integration. Technologies not yet selected.
+20. **AI Dungeon Master / narrator** (ChatGPT / Todd + Claude UI) - an AI
+    narration and interaction layer over the deterministic engine. The engine
+    stays authoritative for B1 content, rules, state, and legal actions. A safe
+    structured context and result boundary is defined before any conversational
+    input or generated narration is added.
 
 Numbering is non-contiguous by design; on-hold items keep their numbers.
 
-> The current Web Speech API narration (item 10) is an **interim** mechanism, not
-> the AI feature. Item 19 eventually supersedes it.
+> **Item 19 gates item 20.** The AI layer needs a server-side place to hold a
+> provider key, which is exactly what item 19 builds. Item 20 also depends on a
+> stable exploration engine and the player-facing UI.
 
 ## Data model
 
-**There is no database and no server.** Data splits into static authored content
-and in-memory runtime state that is lost on reload. The shapes below are the real
-contract every module reads, so later features depend on them.
+The project is mid-transition. **Today there is no database and no server**: data
+is static authored content plus in-memory runtime state lost on reload. The
+finished application is intended to use a backend and a persistent database
+(`project-plan.md` section 4), but the technology and schema are not selected.
+
+Both are described below. The current shapes are the real contract every module
+reads right now, so later features depend on them.
 
 ### Room (static, `src/game/rooms.js`)
 
@@ -170,7 +183,8 @@ literal: `getLockKey(roomId, featureId, lockId)` yields `roomId:featureId:lockId
 - `unlockedLocks`, `openedContainers`, `attemptedLocks`, `triggeredTraps`
 
 > Lock this shape. Every engine module and most components read it, so a change
-> here affects all three contributors.
+> here affects all three contributors. It is also the natural serialization unit
+> for item 19: a saved game is essentially this plus the player and current room.
 
 ### Player (runtime, `createPlayer()` / `createTestThief()`)
 
@@ -185,14 +199,33 @@ literal: `getLockKey(roomId, featureId, lockId)` yields `roomId:featureId:lockId
 `currentRoom`, `visitedRoomIds`, `steps` (the action log), `gameState`
 (`EXPLORING` / `COMBAT` / `GAME_OVER`), map panel state.
 
-> TODO: no save or resume. Nothing survives a reload, and no build-plan item
-> delivers persistence. Flagged in `project-plan.md` section 4.
+### Planned persistence (item 19, not yet designed)
 
-### Narration context (item 19, not yet designed)
+`project-plan.md` section 4 expects the database to hold:
 
-Item 19 turns the spoiler boundary from a UI rule into a **data boundary**. The AI
-layer may only receive what the player is legitimately allowed to know. That means
-a deliberate, filtered projection of the shapes above, never the raw objects:
+- authored and adapted adventure copy, and structured B1 content
+- room, feature, event, item, encounter, and rules content the app needs
+- player and game save state
+- discoveries, inventory, visited areas, world changes, other persistent state
+- AI-related configuration and supporting data
+- possibly conversation and narration history, subject to product and privacy
+  decisions
+
+> **The stated invariant:** the database must not blur authoritative game data and
+> AI-generated presentation. Canonical B1-derived content and mechanical state stay
+> authoritative; AI output is presentation. Any schema for item 19 has to keep
+> those separable, which argues for storing them in distinct places rather than
+> one merged "room text" column.
+
+> TODO: technology and schema unselected. Note that content currently lives in
+> `src/game/rooms.js` as code, so item 19 implies a migration path from authored
+> modules to stored rows, not just a new store.
+
+### Narration context (item 20, not yet designed)
+
+Item 20 turns the spoiler boundary into a **data boundary**. The AI layer may only
+receive what the player is legitimately allowed to know: a deliberate, filtered
+projection of the shapes above, never the raw objects.
 
 - `dm:` blocks must not be in the context, on any room, feature, or event
 - undiscovered secrets, unrevealed `searchResults`, and unfired interactions must
@@ -200,10 +233,12 @@ a deliberate, filtered projection of the shapes above, never the raw objects:
 - rooms the player has not reached, and future encounters, must not be in the context
 
 > TODO: this projection does not exist. Defining it is the first real step of item
-> 19, ahead of any conversational input or generated narration. A leak here is not
+> 20, ahead of any conversational input or generated narration. A leak here is not
 > a cosmetic bug; it destroys the exploration the module depends on.
 
 ## Tech stack
+
+### Current, and intentional
 
 - **React 19** - UI, function components, `useState` only
 - **Vite 8** - dev server and build
@@ -211,17 +246,33 @@ a deliberate, filtered projection of the shapes above, never the raw objects:
 - **Plain CSS** - two files, design tokens as custom properties on `:root`
 - **npm** - `package-lock.json`
 - **ESLint 10** - flat config, react-hooks and react-refresh plugins
-- **Web Speech API** - narration, no external TTS service
+- **Web Speech API** - interim narration, no external TTS service
 
 No backend, no database, no auth, no state library, no router (until item 15), no
 UI component library, no test runner (until item 11).
 
-> **TODO: item 19 has no stack.** The AI Dungeon Master needs a model provider, an
-> API key, and a way to keep that key off the client, which normally means a
-> server-side proxy. `project-plan.md` section 5 currently says no backend, and
-> section 8 describes a static build with no environment variables. Those three
-> statements cannot all stay true. Decide the provider and the hosting shape
-> before item 19 is spec'd, then update section 5 and re-run `/overview`.
+This describes a client-side prototype, and `project-plan.md` is explicit that it
+is the present implementation, not the intended final architecture.
+
+### Planned, and deliberately unselected
+
+The finished application is intended to include a backend and API layer, a
+persistent database, environment-variable configuration, persistent storage for
+adventure content and game state, and server-side integration with an AI provider.
+
+> **Hard rule from the plan:** private credentials, meaning AI provider API keys
+> and database credentials, stay server-side. Never in the browser bundle, never
+> committed to the repository.
+
+> The backend, database, hosting provider, API design, and AI provider are **not
+> chosen**, deliberately. Make those decisions when items 19 and 20 begin, not by
+> assumption now. Do not introduce a provider SDK, an ORM, or a server framework
+> as a side effect of other work.
+
+The deterministic game engine remains authoritative for B1 content, rules,
+mechanical outcomes, and persisted state. The AI layer consumes controlled
+application data and presents or interprets it; it never becomes the source of
+truth.
 
 ## Monetization
 
@@ -232,9 +283,10 @@ UI component library, no test runner (until item 11).
 > local development but needing review before publication. This gates any public
 > deployment.
 
-> Cost note: item 19 makes this project cost money per play session, since every
-> narrated action is a model call. A portfolio piece with no revenue and a public
-> URL is an open-ended bill. Worth deciding alongside the stack question above.
+> Cost note: items 19 and 20 give this project a running cost, since every narrated
+> action becomes a model call and the backend and database need hosting. A
+> portfolio piece with no revenue and a public URL is an open-ended bill. Worth a
+> spend limit and a decision on who can reach it.
 
 ## UI/UX
 
@@ -268,17 +320,18 @@ Product guardrails for UI work, from `docs/01_PRODUCT_DIRECTION.md`:
 
 Not deployed. No host, no provider config, no CI.
 
-If it ships, it is a static build: `npm run build` produces `dist/`, servable from
-any static host. No server runtime, no environment variables, no database, no
-workers, no health check path.
+The Vite static build (`npm run build` to `dist/`) stays useful for frontend
+development, but it does not describe the intended production architecture.
+
+Production is expected to need a frontend, a backend or API service, a database,
+environment variables and secret configuration, and AI provider integration.
+Providers are not selected. Deployment must keep private credentials server-side
+and put a controlled API boundary between the browser, the game data, and the AI
+service.
 
 > TODO: whether deployment is in scope at all, and where. The B1 rights question
-> under Monetization comes first. No build-plan item covers deployment readiness.
-
-> **Item 19 breaks the static-build assumption.** An AI narrator needs a secret API
-> key, so it needs a server-side proxy or serverless function, which means a host
-> that runs code, environment variables, and a spend limit. "Static build, any
-> static host" holds only until item 19 is real.
+> under Monetization comes first. No build-plan item covers deployment readiness,
+> and items 19 and 20 now make one necessary.
 
 ## Working agreement
 
@@ -296,52 +349,54 @@ Three contributors, recorded in `build-plan.md`:
 - `current-feature.md` has one slot and tracks Claude's lane only, so `/status`
   does not see work done outside the Blueprint loop.
 
+> A backend (item 19) adds directories no lane currently owns. Decide who owns
+> server code before that item starts.
+
 ## Open questions
 
-Product decisions that are open in `docs/03_OPEN_QUESTIONS.md` and must not be
-settled by implementation:
+Product decisions open in `docs/03_OPEN_QUESTIONS.md`, which must not be settled by
+implementation:
 
 - **Final visual direction** - blocks item 16.
-- **Turn, light, rest, and resource model** - how turns advance per action. Blocks
-  item 14 and the `durationTurns` gap above.
-- **Dungeon stocking policy** - fixed, random, seeded, or selectable. Materially
-  different UI consequences.
+- **Turn, light, rest, and resource model** - blocks item 14 and the
+  `durationTurns` gap above.
+- **Dungeon stocking policy** - fixed, random, seeded, or selectable.
 - **Rules-edition baseline** - which Basic D&D source is authoritative where B1 is
   silent and editions differ.
-- **Character and party model** - one PC, PC plus retainers, or several. Avoid
-  layouts that only work for exactly one permanent character.
+- **Character and party model** - one PC, PC plus retainers, or several.
 - **Player mapping model** - automap, explored-only, breadcrumb, or none.
 - **DM/developer inspector** - whether it exists in production and how it toggles.
 
-New with item 19, and unresolved:
+Open for items 19 and 20 specifically:
 
-- **Which model provider, and where the key lives.** Contradicts "no backend" in
-  section 5 and "static build, no env vars" in section 8. See the TODOs there.
-- **What the narration context projection contains.** See the Data model section.
-  This is the first real step of item 19.
+- **Backend, database, hosting, and AI provider** - all unselected, deliberately.
+- **Identity for saved games** - there is no auth, so what a save belongs to is
+  undefined.
+- **What the narration context projection contains** - the first real step of item
+  20. See the Data model section.
 - **How much conversational input is supported**, and what happens when player
   intent cannot be safely mapped to a legal engine action.
-- **Whether the AI may ever author prose B1 does not specify.** The governing
-  fidelity rule says the module is the authority, and an LLM narrating "naturally"
-  is exactly the mechanism by which invented canonical prose creeps in. Item 19
-  needs an explicit answer, and `docs/03_OPEN_QUESTIONS.md` already has a "final
+- **Whether the AI may author prose B1 does not specify.** The fidelity rule says
+  the module is the authority, and an LLM narrating "naturally" is exactly how
+  invented canonical prose creeps in. `docs/03_OPEN_QUESTIONS.md` has a "final
   prose adaptation policy" question this belongs under.
+- **Conversation and narration history** - whether it is stored at all, given the
+  privacy note in `project-plan.md` section 4.
 
 Gaps and plan-shape notes from this generation:
 
-- **Item 12 is nested under item 11 in `build-plan.md`.** It reads as a sub-step of
-  the test runner, which it is not, and the On hold section still says "the next
-  unchecked item is the first one under Next, not item 12." One of the two is
-  stale. Left as found; see the report from this run.
-- **Item 19 has two owners** ("ChatGPT / Todd + Claude UI"), which the working
-  agreement's one-owner-per-item rule does not allow. It probably wants splitting
-  into an engine item and a UI item.
-- **Item 16 is oversized.** "Player-facing UI" bundles an entire presentation
-  layer. `/feature 16` will need to split it, and it cannot start until the visual
-  direction is decided.
-- **Items 11 and 17 are tooling, not user-visible outcomes.** Intentional, and the
-  Blueprint sanctions a test-runner item, but they will not produce a demoable
-  change.
-- **No persistence feature** exists despite the save/resume TODO in the plan.
-- **No deployment-readiness item** exists, and item 19 now makes one necessary.
+- **`project-plan.md` section 4 contradicts itself.** The new text says the
+  finished app will persist save state in a database; the TODO at the end of the
+  same section still asks "whether save/resume is wanted, and if so whether it is
+  `localStorage` or something server-backed." Item 19 answers it. Delete the stale
+  TODO.
+- **The On hold section still says "not item 12."** Item 12 moved up to Next, so
+  that sentence in `build-plan.md` is stale.
+- **Item 20 has two owners** ("ChatGPT / Todd + Claude UI"), which the
+  one-owner-per-item rule does not allow. It likely wants splitting into an engine
+  item and a UI item.
+- **Items 19 and 20 are both large.** Each will need splitting at `/feature` time,
+  and 19 bundles four things: server boundary, config, database, persistence model.
+- **Item 16 is oversized** and cannot start until the visual direction is decided.
+- **Items 11 and 17 are tooling**, not user-visible outcomes. Intentional.
 - **Item 14 is unassigned** and blocked twice: on item 13 and on the turn model.

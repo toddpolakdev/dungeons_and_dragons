@@ -139,8 +139,8 @@ The exact database technology and schema have not been selected yet.
 - **Session state** - runtime. Current room, visited room ids, step log, game
   state (`EXPLORING`, `COMBAT`, `GAME_OVER`), map panel state.
 
-> TODO (confirm): whether save/resume is wanted, and if so whether it is
-> `localStorage` or something server-backed. Nothing today survives a reload.
+> Nothing today survives a reload. Save and resume is server-backed persistence,
+> covered by build-plan item 19, not `localStorage`.
 
 ## 5. Tech - What stack are we using?
 
