@@ -79,37 +79,41 @@ refresh the overview, and then write the feature spec.
 ## Shipped before adoption
 
 - [x] 1. **Game engine foundation** - dice and formula rolling, characters,
-  attack resolution, game states
+     attack resolution, game states
 - [x] 2. **Room model and movement** - rooms with descriptions, examine text,
-  exits, and features; directional movement between them
+     exits, and features; directional movement between them
 - [x] 3. **B1 entrance through the intersection** - entrance, three pairs of
-  alcoves, the recurring Magic Mouth event, the intersection and its five bodies
+     alcoves, the recurring Magic Mouth event, the intersection and its five bodies
 - [x] 4. **Persistent world state** - examined, searched, triggered, discovered,
-  and collected outcomes that change how a room presents on a revisit
+     and collected outcomes that change how a room presents on a revisit
 - [x] 5. **Readable findings presentation** - one action returning several
-  observations renders as discrete blocks rather than one dense paragraph
+     observations renders as discrete blocks rather than one dense paragraph
 - [x] 6. **Kitchen interactions** - B1 kitchen features, searches, and discoveries
 - [x] 7. **Test UI componentization** - the harness split into components and
-  moved onto its own page
+     moved onto its own page
 - [x] 8. **Dining room and lounge interactions** - B1 room features, nested
-  interactions, and discoveries for both rooms
+     interactions, and discoveries for both rooms
 - [x] 9. **Wizard chamber, locks and traps** - locked container, thief
-  lock-picking gated on class, tools, skill and a single attempt, trap keys
+     lock-picking gated on class, tools, skill and a single attempt, trap keys
 - [x] 10. **Narration and developer map panel** - Web Speech API read-aloud, plus
-  a floating panel pinning rooms onto the module map scans
+      a floating panel pinning rooms onto the module map scans
 
 ## Next
 
 - [ ] 11. **Unit test runner** (Claude) - add Vitest, wire the scripts, one
-  example test, and turn on the test gate. Run `/tests`. Touches no hot file, and
-  it gives all three contributors a net before parallel engine work.
+      example test, and turn on the test gate. Run `/tests`. Touches no hot file, and
+      it gives all three contributors a net before parallel engine work.
+  - [ ] 12. **B1 upper level, continued** (ChatGPT / Todd) - keep working outward
+        from the wizard chamber through the remaining keyed rooms. Areas 1 to 5 are
+        done; this is area 6 onward. Room data is **engine**; each new room also needs
+        a map pin in `src/map/roomCoords.js`, which is Claude's.
 - [ ] 15. **Router** (Claude) - routing so a player-facing page can live beside
-  the test page rather than replacing it.
+      the test page rather than replacing it.
 - [ ] 16. **Player-facing UI** (Claude) - the real presentation layer. Blocked on
-  choosing an art direction; `docs/03_OPEN_QUESTIONS.md` leaves that open, and it
-  is a product decision, not a styling one.
+      choosing an art direction; `docs/03_OPEN_QUESTIONS.md` leaves that open, and it
+      is a product decision, not a styling one.
 - [ ] 17. **TypeScript migration** (unassigned) - convert the codebase to
-  TypeScript. Touches every file, so it needs the other two lanes quiet.
+      TypeScript. Touches every file, so it needs the other two lanes quiet.
 
 ## On hold
 
@@ -120,23 +124,19 @@ Deferred by Todd, not cancelled and not deprioritized on merit. These are the
 under Next, not item 12. Move an item back up to Next when it is ready to be
 worked, keeping its number.
 
-- [ ] 12. **B1 upper level, continued** (ChatGPT / Todd) - keep working outward
-  from the wizard chamber through the remaining keyed rooms. Areas 1 to 5 are
-  done; this is area 6 onward. Room data is **engine**; each new room also needs
-  a map pin in `src/map/roomCoords.js`, which is Claude's.
 - [ ] 13. **Combat integration** (ChatGPT / Todd) - make the `COMBAT` state
-  actually reachable from B1 encounters instead of a manual toggle, and hand
-  control back to exploration when the encounter ends. **engine**, with a UI
-  surface for the encounter.
+      actually reachable from B1 encounters instead of a manual toggle, and hand
+      control back to exploration when the encounter ends. **engine**, with a UI
+      surface for the encounter.
 - [ ] 14. **Wandering monsters** (unassigned) - B1's upper-level check cadence and
-  table, plus the turn and time model it depends on. **engine**. Blocked twice
-  over: it hands into item 13, and "how turns advance for each action" is still
-  open in `docs/03_OPEN_QUESTIONS.md`. Claude can take an isolated slice (the
-  table as data, a pure check function, both in new files) once the turn model is
-  decided. UI implication: unsolicited results can arrive because time passed,
-  not only because the player clicked.
+      table, plus the turn and time model it depends on. **engine**. Blocked twice
+      over: it hands into item 13, and "how turns advance for each action" is still
+      open in `docs/03_OPEN_QUESTIONS.md`. Claude can take an isolated slice (the
+      table as data, a pure check function, both in new files) once the turn model is
+      decided. UI implication: unsolicited results can arrive because time passed,
+      not only because the player clicked.
 - [ ] 18. **B1 lower level** (ChatGPT / Todd) - the second half of Quasqueton.
-  **engine** for the room data.
+      **engine** for the room data.
 
 > TODO (confirm): the order of 11, 15, and 17 is inferred. Item 16 keeps the
 > priority you gave it; the runner, router, and TypeScript items were slotted

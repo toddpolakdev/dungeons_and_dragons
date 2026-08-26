@@ -80,12 +80,12 @@ something done.
    When implementation is done, end with a compact review packet: changed files,
    checks run, manual try path, risks, and next action.
 10. **Safety + log** - `/complete` first checks the active spec, branch, changed
-   files, Verify or fallback check evidence, manual try path, and adapter sync when
-   workflow files changed. Then it archives the spec to `blueprint/history/features/NN-name.md` (or
-   `blueprint/history/fixes/`), checks the feature off in `blueprint/build-plan.md`, and
-   resets `blueprint/context/current-feature.md` to its stub.
+    files, Verify or fallback check evidence, manual try path, and adapter sync when
+    workflow files changed. Then it archives the spec to `blueprint/history/features/NN-name.md` (or
+    `blueprint/history/fixes/`), checks the feature off in `blueprint/build-plan.md`, and
+    resets `blueprint/context/current-feature.md` to its stub.
 11. **Feature commit** - `/complete` stages everything on the branch (step work
-   plus the logging changes) into one conventional feature commit.
+    plus the logging changes) into one conventional feature commit.
 12. **Squash-merge** - `/complete` squash-merges the branch to main (explicit yes)
     and deletes it, so the feature lands as one commit. Then it must ask
     separately before pushing main; merge approval does not approve a push.
@@ -147,8 +147,9 @@ a PR against `working-branch` rather than merging.
 - Don't refactor unrelated code unless asked
 - Don't add "nice to have" features
 - Preserve existing patterns in the codebase
-- **Stay out of `src/game/*`.** That is Todd's game engine and it is under active
-  development on his side. Work in the presentation layer, and when a UI need
+  **Respect engine ownership.** `src/game/*` is owned by Todd and ChatGPT.
+  Claude Code stays in the presentation/tooling directories unless Todd
+  explicitly asks it to make an engine change.Work in the presentation layer, and when a UI need
   looks like it requires an engine change, propose it instead of making it.
 - `docs/` records product intent, not implementation. Read it and cite it; the
   questions in `docs/03_OPEN_QUESTIONS.md` are product decisions to escalate, not

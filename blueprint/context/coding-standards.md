@@ -5,17 +5,18 @@
 
 ## Ownership
 
-`src/game/*` is the **game engine, and Todd owns it**. It is under active
-development on his side.
+`src/game/*` is the **game engine, owned by Todd and ChatGPT**. It is under active
+development in that lane.
 
-- The AI works on the presentation layer: `src/components/`, `src/pages/`,
-  `src/hooks/`, `src/utils/`, CSS.
-- Ask before editing anything under `src/game/`, including `rooms.js` content.
-- When a UI need seems to require an engine change, say so and propose the change
-  rather than making it.
+- Todd and ChatGPT work on the game engine, including `src/game/rooms.js`.
+- Claude Code works on the presentation layer: `src/components/`, `src/pages/`,
+  `src/hooks/`, `src/utils/`, `src/map/`, and CSS.
+- Claude Code asks before editing anything under `src/game/`.
+- When presentation work appears to require an engine change, Claude Code should
+  describe the required change rather than making it.
 
-`docs/` is the source of truth for product intent and is also Todd's. Read it,
-cite it, do not rewrite it.
+`docs/` is the source of truth for product intent. Read it and cite it; do not
+rewrite product decisions through implementation.
 
 ## Language
 
