@@ -146,3 +146,28 @@ For now, preserve source fidelity and avoid adding flavor merely to make a scree
 - “Should I create extra narrative copy for empty states?”
 
 These are product/gameplay questions, not styling details.
+
+## AI Dungeon Master / narrator
+
+The long-term product is intended to support an AI Dungeon Master / narrator
+layer over the deterministic B1 game engine.
+
+Settled boundary:
+
+- the game engine remains authoritative for B1 content and mechanical state;
+- AI must not invent canonical room facts, encounters, treasures, rules, or
+  outcomes;
+- hidden DM information must not be exposed to the model when the player has not
+  earned it.
+
+Still open:
+
+- whether AI narration is optional or the primary play mode;
+- whether the player can communicate through free-form text, voice, or both;
+- how free-form requests map onto supported engine actions;
+- whether generated narration may add non-canonical atmospheric phrasing;
+- which model/provider is used;
+- whether AI processing requires a server or serverless layer;
+- cost, latency, privacy, and offline/fallback behavior;
+- whether generated voice replaces or supplements browser speech synthesis;
+- how conversation history is separated from authoritative game state.
