@@ -100,7 +100,7 @@ refresh the overview, and then write the feature spec.
 
 ## Next
 
-- [ ] 11. **Unit test runner** (Claude) - add Vitest, wire the scripts, one
+- [x] 11. **Unit test runner** (Claude) - add Vitest, wire the scripts, one
       example test, and turn on the test gate. Run `/tests`. Touches no hot file, and
       it gives all three contributors a net before parallel engine work.
 - [ ] 12. **B1 upper level, continued** (ChatGPT / Todd) - keep working outward
