@@ -63,19 +63,29 @@ Shipped before Blueprint adoption (items 1 to 10):
 
 Active queue:
 
-11. **Unit test runner** - Vitest, scripts, one example test, test gate on.
-15. **Router** - so a player-facing page can live beside the test page.
-16. **Player-facing UI** - the real presentation layer, replacing the harness.
-17. **TypeScript migration** - convert the codebase to TypeScript.
+11. **Unit test runner** (Claude) - Vitest, scripts, one example test, test gate on.
+12. **B1 upper level, continued** (ChatGPT / Todd) - area 6 onward. Each new room
+    also needs a map pin in `src/map/roomCoords.js`, which is Claude's file.
+15. **Router** (Claude) - so a player-facing page can live beside the test page.
+16. **Player-facing UI** (Claude) - the real presentation layer, replacing the harness.
+17. **TypeScript migration** (unassigned) - convert the codebase to TypeScript.
 
 On hold (engine-heavy, deferred by Todd):
 
-12. **B1 upper level, continued** - area 6 onward.
 13. **Combat integration** - make `COMBAT` reachable from B1 encounters.
 14. **Wandering monsters** - B1 check cadence and table, plus the turn model.
 18. **B1 lower level** - the second half of Quasqueton.
+19. **AI Dungeon Master / narrator** - an AI narration and interaction layer over
+    the deterministic engine. The engine stays authoritative for B1 content, rules,
+    state, dice, discoveries, encounters, inventory, and legal actions; the AI
+    narrates results and translates conversational input into supported actions.
+    A safe structured context and result boundary is defined before any
+    conversational input or generated narration is added.
 
 Numbering is non-contiguous by design; on-hold items keep their numbers.
+
+> The current Web Speech API narration (item 10) is an **interim** mechanism, not
+> the AI feature. Item 19 eventually supersedes it.
 
 ## Data model
 
@@ -178,6 +188,21 @@ literal: `getLockKey(roomId, featureId, lockId)` yields `roomId:featureId:lockId
 > TODO: no save or resume. Nothing survives a reload, and no build-plan item
 > delivers persistence. Flagged in `project-plan.md` section 4.
 
+### Narration context (item 19, not yet designed)
+
+Item 19 turns the spoiler boundary from a UI rule into a **data boundary**. The AI
+layer may only receive what the player is legitimately allowed to know. That means
+a deliberate, filtered projection of the shapes above, never the raw objects:
+
+- `dm:` blocks must not be in the context, on any room, feature, or event
+- undiscovered secrets, unrevealed `searchResults`, and unfired interactions must
+  not be in the context
+- rooms the player has not reached, and future encounters, must not be in the context
+
+> TODO: this projection does not exist. Defining it is the first real step of item
+> 19, ahead of any conversational input or generated narration. A leak here is not
+> a cosmetic bug; it destroys the exploration the module depends on.
+
 ## Tech stack
 
 - **React 19** - UI, function components, `useState` only
@@ -191,6 +216,13 @@ literal: `getLockKey(roomId, featureId, lockId)` yields `roomId:featureId:lockId
 No backend, no database, no auth, no state library, no router (until item 15), no
 UI component library, no test runner (until item 11).
 
+> **TODO: item 19 has no stack.** The AI Dungeon Master needs a model provider, an
+> API key, and a way to keep that key off the client, which normally means a
+> server-side proxy. `project-plan.md` section 5 currently says no backend, and
+> section 8 describes a static build with no environment variables. Those three
+> statements cannot all stay true. Decide the provider and the hosting shape
+> before item 19 is spec'd, then update section 5 and re-run `/overview`.
+
 ## Monetization
 
 **Not in v1.** This is a portfolio and demo piece.
@@ -199,6 +231,10 @@ UI component library, no test runner (until item 11).
 > of the Coast). `public/maps/README.md` already flags the map scans as fine for
 > local development but needing review before publication. This gates any public
 > deployment.
+
+> Cost note: item 19 makes this project cost money per play session, since every
+> narrated action is a model call. A portfolio piece with no revenue and a public
+> URL is an open-ended bill. Worth deciding alongside the stack question above.
 
 ## UI/UX
 
@@ -239,6 +275,11 @@ workers, no health check path.
 > TODO: whether deployment is in scope at all, and where. The B1 rights question
 > under Monetization comes first. No build-plan item covers deployment readiness.
 
+> **Item 19 breaks the static-build assumption.** An AI narrator needs a secret API
+> key, so it needs a server-side proxy or serverless function, which means a host
+> that runs code, environment variables, and a spend limit. "Static build, any
+> static host" holds only until item 19 is real.
+
 ## Working agreement
 
 Three contributors, recorded in `build-plan.md`:
@@ -272,8 +313,29 @@ settled by implementation:
 - **Player mapping model** - automap, explored-only, breadcrumb, or none.
 - **DM/developer inspector** - whether it exists in production and how it toggles.
 
+New with item 19, and unresolved:
+
+- **Which model provider, and where the key lives.** Contradicts "no backend" in
+  section 5 and "static build, no env vars" in section 8. See the TODOs there.
+- **What the narration context projection contains.** See the Data model section.
+  This is the first real step of item 19.
+- **How much conversational input is supported**, and what happens when player
+  intent cannot be safely mapped to a legal engine action.
+- **Whether the AI may ever author prose B1 does not specify.** The governing
+  fidelity rule says the module is the authority, and an LLM narrating "naturally"
+  is exactly the mechanism by which invented canonical prose creeps in. Item 19
+  needs an explicit answer, and `docs/03_OPEN_QUESTIONS.md` already has a "final
+  prose adaptation policy" question this belongs under.
+
 Gaps and plan-shape notes from this generation:
 
+- **Item 12 is nested under item 11 in `build-plan.md`.** It reads as a sub-step of
+  the test runner, which it is not, and the On hold section still says "the next
+  unchecked item is the first one under Next, not item 12." One of the two is
+  stale. Left as found; see the report from this run.
+- **Item 19 has two owners** ("ChatGPT / Todd + Claude UI"), which the working
+  agreement's one-owner-per-item rule does not allow. It probably wants splitting
+  into an engine item and a UI item.
 - **Item 16 is oversized.** "Player-facing UI" bundles an entire presentation
   layer. `/feature 16` will need to split it, and it cannot start until the visual
   direction is decided.
@@ -281,5 +343,5 @@ Gaps and plan-shape notes from this generation:
   Blueprint sanctions a test-runner item, but they will not produce a demoable
   change.
 - **No persistence feature** exists despite the save/resume TODO in the plan.
-- **No deployment-readiness item** exists, correctly, since deployment is undecided.
+- **No deployment-readiness item** exists, and item 19 now makes one necessary.
 - **Item 14 is unassigned** and blocked twice: on item 13 and on the turn model.

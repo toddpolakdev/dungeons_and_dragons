@@ -103,10 +103,10 @@ refresh the overview, and then write the feature spec.
 - [ ] 11. **Unit test runner** (Claude) - add Vitest, wire the scripts, one
       example test, and turn on the test gate. Run `/tests`. Touches no hot file, and
       it gives all three contributors a net before parallel engine work.
-  - [ ] 12. **B1 upper level, continued** (ChatGPT / Todd) - keep working outward
-        from the wizard chamber through the remaining keyed rooms. Areas 1 to 5 are
-        done; this is area 6 onward. Room data is **engine**; each new room also needs
-        a map pin in `src/map/roomCoords.js`, which is Claude's.
+- [ ] 12. **B1 upper level, continued** (ChatGPT / Todd) - keep working outward
+      from the wizard chamber through the remaining keyed rooms. Areas 1 to 5 are
+      done; this is area 6 onward. Room data is **engine**; each new room also needs
+      a map pin in `src/map/roomCoords.js`, which is Claude's.
 - [ ] 15. **Router** (Claude) - routing so a player-facing page can live beside
       the test page rather than replacing it.
 - [ ] 16. **Player-facing UI** (Claude) - the real presentation layer. Blocked on
@@ -137,6 +137,19 @@ worked, keeping its number.
       not only because the player clicked.
 - [ ] 18. **B1 lower level** (ChatGPT / Todd) - the second half of Quasqueton.
       **engine** for the room data.
+
+- [ ] 19. **Backend and persistence foundation** (Todd / ChatGPT) - introduce
+      the server/API boundary, environment-variable configuration, database
+      integration, and persistence model needed for authored content, saved game
+      state, and later AI integration. Exact backend and database technologies are
+      still to be selected.
+
+- [ ] 20. **AI Dungeon Master / narrator** (ChatGPT / Todd + Claude UI) -
+      introduce an AI-mediated narration and interaction layer over the deterministic
+      game engine. The engine remains authoritative for B1 content, rules, state, and
+      legal actions. Initial scope should define a safe structured context/result
+      boundary before adding conversational input or generated narration. Depends on
+      a sufficiently stable exploration engine and player-facing UI.
 
 > TODO (confirm): the order of 11, 15, and 17 is inferred. Item 16 keeps the
 > priority you gave it; the runner, router, and TypeScript items were slotted

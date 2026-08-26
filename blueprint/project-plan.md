@@ -14,7 +14,7 @@
 
 ## 1. Problem - What problem are we solving?
 
-D&D Module B1, *In Search of the Unknown* (Mike Carr, 1979), is a tabletop
+D&D Module B1, _In Search of the Unknown_ (Mike Carr, 1979), is a tabletop
 adventure that needs a Dungeon Master to run it. A solo player cannot experience
 it without one.
 
@@ -71,10 +71,58 @@ Still needed for the product to be what it intends to be:
 - Wandering monsters and the time model they depend on
 - A player-facing presentation layer that replaces the test harness
 
+### Long-term AI Dungeon Master / narrator
+
+The intended product eventually includes an AI-driven Dungeon Master / narrator
+layer.
+
+The AI is a presentation and interaction layer, not the source of truth for the
+adventure. B1 content, game state, rules resolution, dice, discoveries,
+encounters, inventory, time, and other mechanical outcomes remain controlled by
+the deterministic game engine.
+
+Possible responsibilities for the AI layer include:
+
+- narrating engine-generated room descriptions and action results naturally;
+- maintaining a consistent Dungeon Master voice;
+- accepting conversational player input and translating it into supported game
+  actions;
+- asking for clarification when a player's intent cannot safely be mapped to an
+  action;
+- presenting consequences and transitions conversationally;
+- eventually providing higher-quality generated voice narration.
+
+The AI must only receive or narrate information the player is legitimately
+allowed to know. Internal `dm:` metadata, undiscovered secrets, unrevealed room
+content, and future encounters must not leak into its narration context.
+
+The current Web Speech API narration is an interim narration mechanism, not the
+final AI feature.
+
 ## 4. Data - What are we storing?
 
-There is no database and no server. All state is in-memory React state for the
-duration of a session, and it is lost on reload.
+The current prototype keeps gameplay state in React memory, but that is not the
+intended final architecture.
+
+The finished application will use a database and backend services.
+
+Expected persisted data includes:
+
+- authored/adapted adventure copy and structured B1 content;
+- room, feature, event, item, encounter, and rules-related content needed by the
+  application;
+- player/game save state;
+- discoveries, inventory, visited areas, world changes, and other persistent
+  adventure state;
+- AI-related configuration and supporting data where appropriate;
+- potentially conversation/narration history, subject to later product and
+  privacy decisions.
+
+The database must not blur the distinction between authoritative game data and
+AI-generated presentation. Canonical B1-derived content and mechanical game
+state remain authoritative data.
+
+The exact database technology and schema have not been selected yet.
 
 - **Room and content data** - static, authored in `src/game/rooms.js`. Rooms,
   features, nested interactions, containers, locks, traps, items, secrets, and
@@ -96,6 +144,8 @@ duration of a session, and it is lost on reload.
 
 ## 5. Tech - What stack are we using?
 
+### Current frontend and development stack
+
 Current, and intentional:
 
 - **React 19** with **Vite 8**, `@vitejs/plugin-react`
@@ -104,16 +154,51 @@ Current, and intentional:
   `src/index.css`
 - **npm** (`package-lock.json`)
 - **ESLint 10** flat config, with the react-hooks and react-refresh plugins
-- **Web Speech API** for narration, no external TTS service
-- No database, no backend, no auth, no state library beyond React `useState`, no
-  router
+- **Web Speech API** for the current narration implementation, with no external
+  TTS service yet
+- React `useState` for current application state; no external state library
+- No router yet
+- No authentication system yet
 
-Wanted later, and tracked as build-plan items rather than assumed:
+The application is currently implemented as a client-side prototype. It does not
+yet have a database or backend, and gameplay state is currently held in browser
+memory. That describes the present implementation, not the intended final
+architecture.
+
+### Planned application architecture
+
+The finished application is intended to include:
+
+- a **backend/API layer**;
+- a **persistent database**;
+- **environment-variable-based configuration**;
+- persistent storage for authored/adapted adventure content and game state;
+- server-side integration with an **AI model/provider** for the planned AI
+  Dungeon Master / narrator feature.
+
+Private credentials, including AI provider API keys and database credentials,
+must remain server-side. They must not be embedded in the browser application or
+committed to the repository.
+
+The backend, database, hosting provider, API design, and AI provider have not yet
+been selected. Those choices should be made deliberately when the corresponding
+build-plan work begins rather than being assumed now.
+
+The deterministic game engine remains authoritative for B1 content, rules,
+mechanical outcomes, and persisted game state. The planned AI layer consumes
+controlled application data and presents or interprets it; it does not replace
+the engine or database as the source of truth.
+
+### Wanted later, and tracked as build-plan items rather than assumed
 
 - TypeScript
 - A unit test runner (Vitest is the natural fit for a Vite project)
 - A router, which becomes relevant once a player-facing page lives beside the
   test page
+- Backend/API infrastructure
+- Database and persistence
+- Environment-variable and secret management
+- AI model integration
 
 ## 6. Monetize - How will this make money?
 
@@ -135,7 +220,7 @@ Not yet chosen, and none of these should be assumed: faux-parchment 1979
 facsimile, modern dark dungeon crawler, polished fantasy RPG HUD, clean ebook
 reader, terminal or parser interface.
 
-What *is* decided: the current interface is a **temporary development and testing
+What _is_ decided: the current interface is a **temporary development and testing
 UI**, not the target presentation layer. Until an art direction is chosen, prefer a
 clear, restrained reading-and-action interface. Optimize for:
 
@@ -163,11 +248,23 @@ Product guardrails for UI work, from `docs/01_PRODUCT_DIRECTION.md`:
 
 ## 8. Deployment - Where and how will this ship?
 
-Not deployed. There is no host, no provider config, and no CI.
+The final application will require more than static frontend hosting.
 
-If it ships, it is a static build: `npm run build` produces `dist/`, servable from
-any static host with no server runtime, no environment variables, no database, and
-no health check path.
+Expected deployment pieces include:
+
+- frontend application;
+- backend/API service;
+- database;
+- environment variables / secret configuration;
+- AI provider integration.
+
+The exact providers have not been selected yet.
+
+Production deployment must keep private credentials server-side and provide a
+controlled API boundary between the browser, game data, and AI services.
+
+The existing Vite static build remains useful for frontend development, but it
+does not describe the intended final production architecture.
 
 > TODO (confirm): whether deployment is in scope, and if so where. The B1 rights
 > question in section 6 comes first.
