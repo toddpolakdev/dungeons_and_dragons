@@ -115,18 +115,16 @@ not permission to edit it.
 
 ## Testing
 
-**No test runner is configured, so there is no test gate.** `AGENTS.md` declares no
-`test` command, and per the switch below that means the loop verifies logic with
-the evidence it already has: running the app, a screenshot, the build.
+**Vitest is configured and the test gate is on.** `AGENTS.md` declares
+`npm run test:run`, and per the switch below that makes a passing test part of any
+logic-bearing step.
 
-Adding Vitest is **build-plan item 11**, and it is a deliberate step of its own.
-Run `/tests` for it. Never install a runner mid-step in unrelated work.
+Run `npm run test:run` for a single pass, or `npm test` to watch. Never use bare
+`npm test` in an automated context; it watches and will not exit.
 
-**The opt-in switch is one signal: a `test` command in the Commands section of
-`AGENTS.md`.** Declare one and tests become a gate for logic-bearing steps; leave
-it out and they are not.
-
-Once the runner exists:
+**The switch is one signal: a `test` command in the Commands section of
+`AGENTS.md`.** It is declared, so tests are a gate. Removing that line would turn
+the gate back off.
 
 - **What to test:** pure logic where a wrong answer is possible. In this codebase
   that is `src/utils/parseGameText.js`, and on the engine side `dice.js`,
@@ -137,8 +135,18 @@ Once the runner exists:
 - **The gate:** a step that adds in-scope logic ships a passing test in the same
   diff, green before approval, before any checkpoint commit, and before
   `/complete` merges. UI-only steps are exempt.
-- An empty suite should fail, not pass, so "no tests ran" never reads as "passed".
+- **Not retroactive.** The gate applies to logic added from here on. Existing
+  untested code is not a blocker, though a test alongside a change to it is welcome.
+- An empty suite fails rather than passes, so "no tests ran" never reads as
+  "passed". Vitest exits 1 when it finds no test files; keep it that way.
 - Test files sit next to their source (`parseGameText.test.js`).
+- Import `describe` / `it` / `expect` from `vitest` explicitly. Globals are off, so
+  `eslint.config.js` needs no test-specific configuration.
+
+**Engine tests are Todd and ChatGPT's call.** Tests live next to their source, so
+testing `src/game/*` means adding files inside their lane. The four engine modules
+above are worth covering, but Claude asks before adding a test file there, the same
+as for any other engine change.
 
 ## Browser Verification
 

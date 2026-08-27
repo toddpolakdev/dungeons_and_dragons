@@ -130,12 +130,16 @@ Vite + React project, npm.
 - Build: `npm run build` (outputs to `dist/`)
 - Preview production build: `npm run preview`
 - Lint: `npm run lint`
+- Test: `npm run test:run` (single pass)
+- Test in watch mode: `npm test`
 
-**No test command.** No unit test runner is configured, so the test gate is off
-and logic is verified by running the app and by the build. Adding Vitest is
-build-plan item 11; run `/tests` or `$tests` for it, and update this section with
-the real test command when it exists.
+**The test gate is on.** `npm run test:run` is the declared test command, so a step
+that adds logic ships a passing test in the same diff. Use `test:run` rather than
+bare `npm test` in any automated context: `npm test` starts Vitest in watch mode
+and will not exit on its own.
 
-**No Verify command.** There is no typecheck (the project is JavaScript) and no
-test runner, so a combined gate would only wrap the build. Run `/ci` or `$ci` when
-you want one defined along with automatic GitHub checks.
+**No Verify command.** There is no typecheck (the project is JavaScript), so a
+combined gate would wrap only the build and tests, which are easy enough to run
+directly. Note that `npm run lint` currently fails on pre-existing errors in
+`src/pages/TestPage.jsx`, so clean that up before wrapping lint into a gate. Run
+`/ci` or `$ci` when you want one defined along with automatic GitHub checks.
