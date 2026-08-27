@@ -660,6 +660,7 @@ export const rooms = {
 
     exits: {
       west: "northPassage",
+      south: "zelligarCloset",
     },
 
     features: [
@@ -821,6 +822,105 @@ export const rooms = {
       module: "B1",
       moduleName: "In Search of the Unknown",
       sourceArea: "5. WIZARD'S CHAMBER",
+    },
+  },
+  zelligarCloset: {
+    id: "zelligarCloset",
+    name: "Zelligar's Closet",
+
+    description:
+      "This large closet is rather barren for its size. Dust lies heavily over the few belongings that remain.",
+
+    examine:
+      "Several bolts of cloth are stacked in one corner, five old garments hang along a wall, and four large books rest on a wooden stand. An oil lantern hangs elsewhere in the room, while a small table in another corner holds a dusty stack of papers beneath a stone paperweight.",
+
+    exits: {
+      north: "wizardChamber",
+    },
+
+    features: [
+      {
+        id: "clothBolts",
+        name: "Bolts of Cloth",
+
+        description:
+          "Several bolts of cloth are stacked in one corner. They are covered with dust and have been partially eaten and deteriorated by moths. They are of no particular value.",
+
+        dm: {
+          hidden: false,
+          valuable: false,
+          sourceArea: "6. CLOSET",
+        },
+      },
+
+      {
+        id: "garments",
+        name: "Garments",
+
+        description:
+          "Five garments, mostly coats and cloaks, hang along one wall. All are musty, dusty, and dingy with age. Four are worthless. The fifth is ornamented with circular pieces of pewter and, despite its poor condition, might bring as much as 15 gold pieces.",
+
+        dm: {
+          hidden: false,
+          count: 5,
+          valuableGarments: 1,
+          valuableGarmentValueGp: 15,
+          sourceArea: "6. CLOSET",
+        },
+      },
+
+      {
+        id: "bookStand",
+        name: "Wooden Book Stand",
+
+        description:
+          "A wooden stand in the corner farthest from the door holds four large books. They appear to belong with the books in the stronghold's library.",
+
+        dm: {
+          hidden: false,
+          bookCount: 4,
+          relatedArea: "12. LIBRARY",
+          sourceArea: "6. CLOSET",
+        },
+      },
+
+      {
+        id: "oilLantern",
+        name: "Oil Lantern",
+
+        description:
+          "An old oil lantern hangs along one wall. It contains no fuel and has plainly gone unused for a very long time, but it remains usable if supplied with oil.",
+
+        dm: {
+          hidden: false,
+          fueled: false,
+          usableIfFueled: true,
+          sourceArea: "6. CLOSET",
+        },
+      },
+
+      {
+        id: "papers",
+        name: "Papers and Paperweight",
+
+        description:
+          "A small table holds a dusty stack of papers beneath a stone slab used as a paperweight. The stone is monogrammed with an ornate letter Z. The papers are written in the common language and concern ordinary matters such as food inventories, expenses, construction work, and routine messages. Even the newest is more than thirty years old.",
+
+        dm: {
+          hidden: false,
+          language: "common",
+          paperweightMonogram: "Z",
+          sourceArea: "6. CLOSET",
+        },
+      },
+    ],
+
+    dm: {
+      areaType: "room",
+      level: 1,
+      module: "B1",
+      moduleName: "In Search of the Unknown",
+      sourceArea: "6. CLOSET",
     },
   },
 };
