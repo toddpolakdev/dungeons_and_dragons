@@ -885,6 +885,78 @@ export const rooms = {
       },
 
       {
+        id: "historyBook",
+        name: "Historical Book",
+
+        description:
+          "This large book is written in the common tongue. It outlines the history of the civilized area within roughly one hundred miles of the stronghold. It contains nothing remarkable.",
+
+        dm: {
+          hidden: false,
+          language: "common",
+          readableNormally: true,
+          remarkableContent: false,
+          sourceArea: "6. CLOSET",
+        },
+      },
+
+      {
+        id: "plantEncyclopedia",
+        name: "Plant Encyclopedia",
+
+        description:
+          "This large volume contains numerous illustrations of plants, providing a clue to its subject. The text itself is written in the language of elves.",
+
+        dm: {
+          hidden: false,
+          language: "elvish",
+          understandableByElvishReader: true,
+          understandableWithReadLanguages: true,
+          sourceArea: "6. CLOSET",
+        },
+      },
+
+      {
+        id: "zelligarDiary",
+        name: "Handwritten Notebook",
+
+        description:
+          "At first glance, this volume appears to be an unremarkable notebook filled with handwritten entries of undecipherable runes and markings.",
+
+        dm: {
+          hidden: false,
+          trueIdentity: "Zelligar's diary",
+          author: "Zelligar",
+          understandableWithReadLanguages: true,
+          decodedContent:
+            "The volume is Zelligar's diary and describes one of his adventures from the distant past.",
+          finderValueGp: 0,
+          specialistValueGp: 50,
+          saleRumorChancePercent: 40,
+          sourceArea: "6. CLOSET",
+        },
+      },
+
+      {
+        id: "weatherBook",
+        name: "Weather Book",
+
+        description:
+          "This illustrated work is written in the common language and discusses weather and meteorological phenomena. Sparse descriptive text accompanies the illustrations. Cryptic handwritten notes appear in the margins.",
+
+        dm: {
+          hidden: false,
+          language: "common",
+          mainTextReadableNormally: true,
+          marginNotesAuthor: "Zelligar",
+          marginNotesRequireReadLanguages: true,
+          decodedMarginNotes:
+            "The notes are ordinary study annotations highlighting important points in the text.",
+          sourceArea: "6. CLOSET",
+        },
+      },
+
+      {
         id: "oilLantern",
         name: "Oil Lantern",
 

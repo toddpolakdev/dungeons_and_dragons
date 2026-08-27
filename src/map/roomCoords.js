@@ -58,4 +58,5 @@ export const roomCoords = {
   diningRoom: { level: 1, area: "3", x: 0.556, y: 0.569 },
   lounge: { level: 1, area: "4", x: 0.568, y: 0.626 },
   wizardChamber: { level: 1, area: "5", x: 0.569, y: 0.379 },
+  zelligarCloset: { level: 1, area: null, x: 0.631, y: 0.444 },
 };
