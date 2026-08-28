@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { maps, roomCoords, DEFAULT_LEVEL } from "../map/roomCoords";
+import { buildTrailSegments } from "../utils/mapTrail";
 import FloatingPanel from "./FloatingPanel";
 
 function round(value) {
@@ -24,6 +25,7 @@ export default function DungeonMap({
   rooms,
   currentRoomId,
   visitedRoomIds,
+  pathRoomIds = [],
   onClose,
   picks = {},
   onPicksChange = () => {},
@@ -71,16 +73,14 @@ export default function DungeonMap({
         typeof pin.y === "number",
     );
 
-  // The trail follows visit order, so it stays the visited set even when every
-  // room is being shown for verification.
-  const trail = visitedRoomIds
-    .map((id) => effectiveCoords[id])
-    .filter(
-      (pin) =>
-        pin?.level === activeLevel &&
-        typeof pin.x === "number" &&
-        typeof pin.y === "number",
-    );
+  // The trail follows the walked path, not the visited set, so backtracking is
+  // drawn rather than short-circuited. It stays the path even when every room is
+  // being shown for verification.
+  const trailSegments = buildTrailSegments(
+    pathRoomIds,
+    effectiveCoords,
+    activeLevel,
+  );
 
   const missingCoords = roomList.filter((room) => !effectiveCoords[room.id]);
 
@@ -204,17 +204,20 @@ export default function DungeonMap({
             }
           />
 
-          {trail.length > 1 && (
+          {trailSegments.length > 0 && (
             <svg
               className="map-trail"
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
             >
-              <polyline
-                points={trail
-                  .map((pin) => `${pin.x * 100},${pin.y * 100}`)
-                  .join(" ")}
-              />
+              {trailSegments.map((segment, index) => (
+                <polyline
+                  key={index}
+                  points={segment
+                    .map((pin) => `${pin.x * 100},${pin.y * 100}`)
+                    .join(" ")}
+                />
+              ))}
             </svg>
           )}
 

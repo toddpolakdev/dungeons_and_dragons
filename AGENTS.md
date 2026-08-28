@@ -153,10 +153,10 @@ Installed on the developer machine, not part of the project's dependencies.
   the Branching section of `blueprint/context/ai-interaction.md`. Opening a PR is
   outward-facing, so ask first.
 - **Playwright MCP server** - configured for this project in Claude Code, with
-  Chromium installed. Configured but not yet proven; see Browser Verification in
-  `blueprint/context/coding-standards.md` before relying on it. It is not an npm
-  dependency and must not be added to `package.json` as a side effect of other
-  work.
+  Chromium installed, and proven working against the test page. See Browser
+  Verification in `blueprint/context/coding-standards.md` for the gotchas. It is
+  not an npm dependency and must not be added to `package.json` as a side effect
+  of other work.
 
 A freshly cloned copy of this repository has neither. Both are conveniences for
 the local environment, so nothing in the build or test path may depend on them.
