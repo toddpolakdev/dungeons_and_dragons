@@ -66,9 +66,11 @@ Shipped before Blueprint adoption (items 1 to 10):
     floating panel pinning rooms onto the module map scans. The speech synthesis
     here is **interim**, not the AI narrator of item 20.
 
+11. **Unit test runner** (Claude) - *shipped.* Vitest, scripts, one example test,
+    test gate on.
+
 Active queue:
 
-11. **Unit test runner** (Claude) - Vitest, scripts, one example test, test gate on.
 12. **B1 upper level, continued** (ChatGPT / Todd) - area 6 onward. Each new room
     also needs a map pin in `src/map/roomCoords.js`, which is Claude's file.
 15. **Router** (Claude) - so a player-facing page can live beside the test page.
@@ -249,7 +251,12 @@ projection of the shapes above, never the raw objects.
 - **Web Speech API** - interim narration, no external TTS service
 
 No backend, no database, no auth, no state library, no router (until item 15), no
-UI component library, no test runner (until item 11).
+UI component library, and no router (until item 15).
+
+**Tooling that does exist:** Vitest with the test gate on, ESLint with a clean
+baseline, and one combined gate, `npm run verify` (lint, tests, build), which
+GitHub Actions runs on every pull request. `main` and `working-branch` both
+require that check before a merge, administrators included.
 
 This describes a client-side prototype, and `project-plan.md` is explicit that it
 is the present implementation, not the intended final architecture.
@@ -281,7 +288,8 @@ truth.
 > Rights constraint: B1's text and maps are third-party material (TSR, now Wizards
 > of the Coast). `public/maps/README.md` already flags the map scans as fine for
 > local development but needing review before publication. This gates any public
-> deployment.
+> deployment. **The Vercel deployment is live but access-protected**, which is
+> what currently keeps this from being a publication. See Deployment.
 
 > Cost note: items 19 and 20 give this project a running cost, since every narrated
 > action becomes a model call and the backend and database need hosting. A
@@ -318,7 +326,23 @@ Product guardrails for UI work, from `docs/01_PRODUCT_DIRECTION.md`:
 
 ## Deployment
 
-Not deployed. No host, no provider config, no CI.
+**Vercel is connected and building this repository.** Every push and pull request
+produces a Preview deployment; merges to the default branch produce a Production
+one. There is no `vercel.json` in the repo, so it is configured on Vercel's side.
+
+**Deployment Protection is on.** The Production URL redirects to Vercel SSO, so
+only someone signed in to the Vercel account can view it. That matters: the B1
+map scans under `public/maps/` are third-party TSR material, and
+`public/maps/README.md` requires review before publication. Turning protection
+off would publish them, so treat that toggle as the rights decision it is, not a
+settings tweak.
+
+Only the static frontend is deployed. No backend, database, or provider key is
+involved, so nothing secret is exposed.
+
+**CI exists.** `.github/workflows/verify.yml` runs `npm run verify` on every pull
+request and on pushes to `main` and `working-branch`, and both branches require
+that check to pass before merging, administrators included.
 
 The Vite static build (`npm run build` to `dist/`) stays useful for frontend
 development, but it does not describe the intended production architecture.
@@ -329,9 +353,10 @@ Providers are not selected. Deployment must keep private credentials server-side
 and put a controlled API boundary between the browser, the game data, and the AI
 service.
 
-> TODO: whether deployment is in scope at all, and where. The B1 rights question
-> under Monetization comes first. No build-plan item covers deployment readiness,
-> and items 19 and 20 now make one necessary.
+> TODO: whether the Vercel integration is intentional and worth keeping. It is
+> doing no harm behind protection and gives a preview URL per pull request, but no
+> build-plan item covers deployment, and items 19 and 20 will need a host that
+> runs server code rather than static hosting.
 
 ## Working agreement
 

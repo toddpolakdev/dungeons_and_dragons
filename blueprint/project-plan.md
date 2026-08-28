@@ -266,5 +266,30 @@ controlled API boundary between the browser, game data, and AI services.
 The existing Vite static build remains useful for frontend development, but it
 does not describe the intended final production architecture.
 
-> TODO (confirm): whether deployment is in scope, and if so where. The B1 rights
-> question in section 6 comes first.
+### What is actually deployed today
+
+**Vercel is connected to this repository and building it.** Every push and pull
+request produces a Preview deployment, and merges to the default branch produce a
+Production one. This is a live integration, not a plan.
+
+Two things make that safe for now, and both should be checked before they change:
+
+- **Deployment Protection is on.** The Production URL redirects to Vercel SSO, so
+  only someone signed in to the Vercel account can view it. The B1 map scans under
+  `public/maps/` are therefore not being served to the public, which is what the
+  rights note in `public/maps/README.md` requires.
+- **It is only the static frontend.** There is no backend, database, or provider
+  key involved, so nothing secret is exposed.
+
+Turning Deployment Protection off would publish third-party TSR material. That is
+the decision the rights question in section 6 gates, and it should be made
+deliberately rather than by toggling a Vercel setting.
+
+**Continuous integration exists.** `.github/workflows/verify.yml` runs
+`npm run verify` on every pull request and on pushes to `main` and
+`working-branch`. Both branches require that check to pass before a merge, and
+the rule applies to administrators too.
+
+> TODO (confirm): whether the Vercel deployment is intentional and worth keeping.
+> It is currently doing no harm and gives a preview URL per pull request, but it
+> is not recorded anywhere else in these plans.
