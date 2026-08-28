@@ -47,3 +47,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Playwright MCP output (browser verification artifacts, never committed).
+# Save screenshots into this folder so they stay out of the repo; a stray file
+# in the project root should show up in git status rather than be hidden.
+.playwright-mcp/

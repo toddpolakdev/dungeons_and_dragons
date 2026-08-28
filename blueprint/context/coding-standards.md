@@ -154,20 +154,24 @@ Running the app is the real evidence. This app is entirely client-side and
 interaction-driven, so `npm run dev`, the browser console, and `npm run build`
 remain the baseline for verifying UI work.
 
-**A Playwright MCP server is configured** for this project in Claude Code, and
-Chromium is installed locally. When it is connected, an agent can drive the app
-directly rather than asking for a screenshot.
+**A Playwright MCP server is configured** for this project in Claude Code, with
+Chromium installed locally, and it **works**. It has driven the test page through
+a multi-move route and captured screenshots that proved a map bug and then its
+fix. Browser automation counts as real evidence for a UI done-when.
 
-Two things to know before relying on it:
+Practical notes:
 
-- It is **configured but not yet proven**. Its first connection attempt timed out
-  on a cold `npx` download. The package is cached now, but nothing has actually
-  driven the app through it yet. Confirm it works before treating browser
-  automation as available evidence, and do not report a done-when as proven on the
-  strength of it being configured.
 - MCP servers connect at **session start**. If the tools are missing, that is a
   connection failure to report, not a missing capability, and it needs a session
-  restart rather than a workaround.
+  restart rather than a workaround. The first connection attempt on a cold `npx`
+  download can exceed the timeout; the package is cached now.
+- **The floating map panel overlays the action buttons** at small viewports and
+  swallows clicks. Resize to roughly 1920x1200, or hide the map while walking a
+  route and show it again to screenshot. Page state survives hiding it.
+- Save screenshots into `.playwright-mcp/`, which is git-ignored. A stray image
+  in the project root shows up in `git status` and should not be committed.
+- Driving a long route one click at a time is slow and burns turns. Prefer a
+  single scripted run for the movement, then a screenshot at the end.
 
 **Playwright is still not a project dependency, and should not become one.** The
 MCP server is Claude Code configuration and touches nothing in `package.json`. Do
@@ -176,10 +180,12 @@ if a spec is explicitly about browser automation.
 
 ## Code Quality
 
-- No commented-out code unless specified. `TestPage.jsx` currently keeps two
-  commented `createPlayer()` lines as a test-harness character toggle; that is a
-  known exception in the temporary harness, not a pattern to copy.
-- No unused imports or variables. `npm run lint` enforces this.
+- No commented-out code unless specified. Where a commented line exists to be
+  swapped in, make it real code instead: `TestPage.jsx` selects its harness
+  character through a `CHARACTERS` map and an `ACTIVE_CHARACTER` constant, which
+  keeps the switch to a one-word edit without leaving dead lines behind.
+- No unused imports or variables. `npm run lint` enforces this, and **the lint
+  baseline is clean**, so any error it reports belongs to the change in hand.
 - Keep functions under 50 lines when possible. `TestPage.jsx` is the harness and
   is already long; prefer extracting a component over adding to it.
 

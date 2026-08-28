@@ -28,6 +28,18 @@ import {
 } from "../game/locks";
 import { getTrapKey } from "../game/traps";
 
+// Test-harness character switch. Change ACTIVE_CHARACTER to exercise the other
+// class: the thief is the default because lock-picking is the mechanic most
+// often under test.
+const CHARACTERS = {
+  fighter: createPlayer,
+  thief: createTestThief,
+};
+
+const ACTIVE_CHARACTER = "thief";
+
+const createCharacter = CHARACTERS[ACTIVE_CHARACTER];
+
 /**
  * The development / testing UI for the B1 adventure.
  *
@@ -37,14 +49,16 @@ import { getTrapKey } from "../game/traps";
  * rather than by dismantling it.
  */
 export default function TestPage() {
-  // const [player, setPlayer] = useState(createPlayer());
-  const [player, setPlayer] = useState(createTestThief());
+  const [player, setPlayer] = useState(createCharacter());
   const [enemy, setEnemy] = useState(createGoblin());
   const [steps, setSteps] = useState([]);
   const [gameState, setGameState] = useState(GAME_STATES.EXPLORING);
   const [currentRoom, setCurrentRoom] = useState(rooms.entrance);
   const [worldState, setWorldState] = useState(createWorldState());
   const [visitedRoomIds, setVisitedRoomIds] = useState([rooms.entrance.id]);
+  // The visited set above is deduplicated, which is right for pins but loses
+  // backtracking. The map trail needs the rooms actually walked, in order.
+  const [pathRoomIds, setPathRoomIds] = useState([rooms.entrance.id]);
   const [mapOpen, setMapOpen] = useState(true);
 
   // Map calibration picks live here, not inside DungeonMap, so closing the
@@ -52,7 +66,6 @@ export default function TestPage() {
   const [mapPicks, setMapPicks] = useState({});
 
   const latestStep = steps[steps.length - 1];
-  const latestNarration = latestStep?.messages?.join(" ") ?? "";
 
   function addStep(title, messages) {
     const messageList = Array.isArray(messages) ? messages : [messages];
@@ -109,13 +122,13 @@ export default function TestPage() {
   }
 
   function handleNewGame() {
-    // setPlayer(createPlayer());
-    setPlayer(createTestThief());
+    setPlayer(createCharacter());
     setEnemy(createGoblin());
     setSteps([]);
     setCurrentRoom(rooms.entrance);
     setWorldState(createWorldState());
     setVisitedRoomIds([rooms.entrance.id]);
+    setPathRoomIds([rooms.entrance.id]);
     setGameState(GAME_STATES.EXPLORING);
   }
 
@@ -590,6 +603,8 @@ export default function TestPage() {
       prev.includes(result.room.id) ? prev : [...prev, result.room.id],
     );
 
+    setPathRoomIds((prev) => [...prev, result.room.id]);
+
     const messages = [result.message];
 
     const eventResult = resolveEvents(result.room.events?.onEnter, worldState);
@@ -676,6 +691,7 @@ export default function TestPage() {
           rooms={rooms}
           currentRoomId={currentRoom.id}
           visitedRoomIds={visitedRoomIds}
+          pathRoomIds={pathRoomIds}
           picks={mapPicks}
           onPicksChange={setMapPicks}
           onClose={() => setMapOpen(false)}
