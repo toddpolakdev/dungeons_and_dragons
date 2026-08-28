@@ -45,6 +45,9 @@ export default function TestPage() {
   const [currentRoom, setCurrentRoom] = useState(rooms.entrance);
   const [worldState, setWorldState] = useState(createWorldState());
   const [visitedRoomIds, setVisitedRoomIds] = useState([rooms.entrance.id]);
+  // The visited set above is deduplicated, which is right for pins but loses
+  // backtracking. The map trail needs the rooms actually walked, in order.
+  const [pathRoomIds, setPathRoomIds] = useState([rooms.entrance.id]);
   const [mapOpen, setMapOpen] = useState(true);
 
   // Map calibration picks live here, not inside DungeonMap, so closing the
@@ -116,6 +119,7 @@ export default function TestPage() {
     setCurrentRoom(rooms.entrance);
     setWorldState(createWorldState());
     setVisitedRoomIds([rooms.entrance.id]);
+    setPathRoomIds([rooms.entrance.id]);
     setGameState(GAME_STATES.EXPLORING);
   }
 
@@ -590,6 +594,8 @@ export default function TestPage() {
       prev.includes(result.room.id) ? prev : [...prev, result.room.id],
     );
 
+    setPathRoomIds((prev) => [...prev, result.room.id]);
+
     const messages = [result.message];
 
     const eventResult = resolveEvents(result.room.events?.onEnter, worldState);
@@ -676,6 +682,7 @@ export default function TestPage() {
           rooms={rooms}
           currentRoomId={currentRoom.id}
           visitedRoomIds={visitedRoomIds}
+          pathRoomIds={pathRoomIds}
           picks={mapPicks}
           onPicksChange={setMapPicks}
           onClose={() => setMapOpen(false)}
