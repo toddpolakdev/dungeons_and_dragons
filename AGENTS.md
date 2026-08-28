@@ -138,11 +138,20 @@ that adds logic ships a passing test in the same diff. Use `test:run` rather tha
 bare `npm test` in any automated context: `npm test` starts Vitest in watch mode
 and will not exit on its own.
 
-**No Verify command.** There is no typecheck (the project is JavaScript), so a
-combined gate would wrap only the build and tests, which are easy enough to run
-directly. Note that `npm run lint` currently fails on pre-existing errors in
-`src/pages/TestPage.jsx`, so clean that up before wrapping lint into a gate. Run
-`/ci` or `$ci` when you want one defined along with automatic GitHub checks.
+- Verify: `npm run verify` (lint, then tests, then build)
+
+**`npm run verify` is the gate.** It is the one command that answers "is this
+project OK", and it is exactly what GitHub runs on a pull request, so local work
+and CI cannot drift apart. Run it before asking for a step to be approved.
+
+There is no typecheck, because the project is JavaScript. Lint is included
+because the baseline is clean; keep it that way rather than letting errors
+accumulate until the gate has to be weakened.
+
+**Automatic GitHub checks** are configured in `.github/workflows/verify.yml`. It
+runs `npm run verify` on every pull request and on pushes to `main` and
+`working-branch`. Whether a failing check actually blocks a merge is a separate
+branch-protection setting in the repository, not part of the workflow file.
 
 ## Local tooling
 

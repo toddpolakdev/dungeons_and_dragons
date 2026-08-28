@@ -1,0 +1,41 @@
+name: Verify
+
+# Runs the same command a developer runs locally: npm run verify.
+# Keep the two in step. If a check is added here but not to the verify script,
+# local work and CI stop agreeing, which is the failure this file exists to avoid.
+
+on:
+  pull_request:
+  push:
+    # working-branch is the integration branch every feature lands in, so it is
+    # checked alongside the default branch. See the Branching section of
+    # blueprint/context/ai-interaction.md.
+    branches:
+      - main
+      - working-branch
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, test, build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # ci, not install: it installs exactly what package-lock.json pins and
+      # fails if the lockfile is out of step with package.json.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify
+        run: npm run verify

@@ -150,9 +150,9 @@ Move an item back up to Next when it is ready to be worked, keeping its number.
       boundary before adding conversational input or generated narration. Depends on
       a sufficiently stable exploration engine and player-facing UI.
 
-> TODO (confirm): the order of 11, 15, and 17 is inferred. Item 16 keeps the
-> priority you gave it; the runner, router, and TypeScript items were slotted
-> around it.
+> TODO (confirm): the order of 15 and 17 is inferred. Item 16 keeps the priority
+> you gave it, and item 11 is done, so the open question is only whether the
+> router comes before the player-facing UI and where TypeScript lands.
 
 > TODO (confirm): several open design questions gate this roadmap and are not
 > features themselves. Dungeon stocking policy, the rules-edition baseline, the
