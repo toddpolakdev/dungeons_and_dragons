@@ -180,10 +180,12 @@ if a spec is explicitly about browser automation.
 
 ## Code Quality
 
-- No commented-out code unless specified. `TestPage.jsx` currently keeps two
-  commented `createPlayer()` lines as a test-harness character toggle; that is a
-  known exception in the temporary harness, not a pattern to copy.
-- No unused imports or variables. `npm run lint` enforces this.
+- No commented-out code unless specified. Where a commented line exists to be
+  swapped in, make it real code instead: `TestPage.jsx` selects its harness
+  character through a `CHARACTERS` map and an `ACTIVE_CHARACTER` constant, which
+  keeps the switch to a one-word edit without leaving dead lines behind.
+- No unused imports or variables. `npm run lint` enforces this, and **the lint
+  baseline is clean**, so any error it reports belongs to the change in hand.
 - Keep functions under 50 lines when possible. `TestPage.jsx` is the harness and
   is already long; prefer extracting a component over adding to it.
 
