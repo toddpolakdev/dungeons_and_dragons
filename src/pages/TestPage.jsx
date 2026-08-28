@@ -28,6 +28,18 @@ import {
 } from "../game/locks";
 import { getTrapKey } from "../game/traps";
 
+// Test-harness character switch. Change ACTIVE_CHARACTER to exercise the other
+// class: the thief is the default because lock-picking is the mechanic most
+// often under test.
+const CHARACTERS = {
+  fighter: createPlayer,
+  thief: createTestThief,
+};
+
+const ACTIVE_CHARACTER = "thief";
+
+const createCharacter = CHARACTERS[ACTIVE_CHARACTER];
+
 /**
  * The development / testing UI for the B1 adventure.
  *
@@ -37,8 +49,7 @@ import { getTrapKey } from "../game/traps";
  * rather than by dismantling it.
  */
 export default function TestPage() {
-  // const [player, setPlayer] = useState(createPlayer());
-  const [player, setPlayer] = useState(createTestThief());
+  const [player, setPlayer] = useState(createCharacter());
   const [enemy, setEnemy] = useState(createGoblin());
   const [steps, setSteps] = useState([]);
   const [gameState, setGameState] = useState(GAME_STATES.EXPLORING);
@@ -55,7 +66,6 @@ export default function TestPage() {
   const [mapPicks, setMapPicks] = useState({});
 
   const latestStep = steps[steps.length - 1];
-  const latestNarration = latestStep?.messages?.join(" ") ?? "";
 
   function addStep(title, messages) {
     const messageList = Array.isArray(messages) ? messages : [messages];
@@ -112,8 +122,7 @@ export default function TestPage() {
   }
 
   function handleNewGame() {
-    // setPlayer(createPlayer());
-    setPlayer(createTestThief());
+    setPlayer(createCharacter());
     setEnemy(createGoblin());
     setSteps([]);
     setCurrentRoom(rooms.entrance);
