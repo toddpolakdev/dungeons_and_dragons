@@ -150,12 +150,29 @@ as for any other engine change.
 
 ## Browser Verification
 
-Playwright is not installed. Do not add it silently in the middle of unrelated
-work; add it only if asked or if a spec is explicitly about browser automation.
+Running the app is the real evidence. This app is entirely client-side and
+interaction-driven, so `npm run dev`, the browser console, and `npm run build`
+remain the baseline for verifying UI work.
 
-Until then, verify UI work with `npm run dev`, a screenshot, the browser console,
-and `npm run build`. This app is entirely client-side and interaction-driven, so
-running it is the real evidence.
+**A Playwright MCP server is configured** for this project in Claude Code, and
+Chromium is installed locally. When it is connected, an agent can drive the app
+directly rather than asking for a screenshot.
+
+Two things to know before relying on it:
+
+- It is **configured but not yet proven**. Its first connection attempt timed out
+  on a cold `npx` download. The package is cached now, but nothing has actually
+  driven the app through it yet. Confirm it works before treating browser
+  automation as available evidence, and do not report a done-when as proven on the
+  strength of it being configured.
+- MCP servers connect at **session start**. If the tools are missing, that is a
+  connection failure to report, not a missing capability, and it needs a session
+  restart rather than a workaround.
+
+**Playwright is still not a project dependency, and should not become one.** The
+MCP server is Claude Code configuration and touches nothing in `package.json`. Do
+not add the npm package in the middle of unrelated work; add it only if asked, or
+if a spec is explicitly about browser automation.
 
 ## Code Quality
 
