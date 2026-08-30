@@ -27,7 +27,7 @@ import {
   isOpen,
 } from "../game/locks";
 import { getTrapKey } from "../game/traps";
-import { useSecretDoor, searchForSecretDoor } from "../game/secretDoors";
+import { traverseSecretDoor, searchForSecretDoor } from "../game/secretDoors";
 
 // Test-harness character switch. Change ACTIVE_CHARACTER to exercise the other
 // class: the thief is the default because lock-picking is the mechanic most
@@ -667,7 +667,7 @@ export default function TestPage() {
   function handleUseSecretDoor(feature) {
     if (gameState !== GAME_STATES.EXPLORING) return;
 
-    const result = useSecretDoor({
+    const result = traverseSecretDoor({
       worldState,
       secretDoor: feature.secretDoor,
       rooms,

@@ -27,7 +27,7 @@ export function isSecretDoorDiscovered(worldState, secretDoor) {
   return worldState.discoveredSecretDoors.includes(secretDoor.id);
 }
 
-export function useSecretDoor({ worldState, secretDoor, rooms }) {
+export function traverseSecretDoor({ worldState, secretDoor, rooms }) {
   if (!secretDoor) {
     return {
       success: false,
