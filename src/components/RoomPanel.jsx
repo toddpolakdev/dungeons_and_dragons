@@ -15,6 +15,7 @@ export default function RoomPanel({
   onSearchFeature,
   onInteraction,
   onOpenContainer,
+  onUseSecretDoor,
   onMove,
   onTakeItem,
   onAttack,
@@ -49,6 +50,7 @@ export default function RoomPanel({
           onInteraction={onInteraction}
           onOpenContainer={onOpenContainer}
           onPickLock={onPickLock}
+          onUseSecretDoor={onUseSecretDoor}
           onMove={onMove}
         />
       )}

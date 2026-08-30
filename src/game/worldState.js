@@ -13,5 +13,6 @@ export function createWorldState() {
     openedContainers: [],
     attemptedLocks: [],
     triggeredTraps: [],
+    discoveredSecretDoors: [],
   };
 }

@@ -59,4 +59,7 @@ export const roomCoords = {
   lounge: { level: 1, area: "4", x: 0.568, y: 0.626 },
   wizardChamber: { level: 1, area: "5", x: 0.569, y: 0.379 },
   zelligarCloset: { level: 1, area: null, x: 0.631, y: 0.444 },
+  wizardAnnex: { level: 1, area: null, x: 0.501, y: 0.433 },
+  wizardWorkroom: { level: 1, area: null, x: 0.393, y: 0.468 },
+  wizardLaboratory: { level: 1, area: null, x: 0.385, y: 0.392 },
 };
