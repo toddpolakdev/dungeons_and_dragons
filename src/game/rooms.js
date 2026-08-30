@@ -638,7 +638,35 @@ export const rooms = {
       east: "wizardChamber",
     },
 
-    features: [],
+    features: [
+      {
+        id: "southWall",
+        name: "South Wall",
+
+        description:
+          "This section of finished stone wall appears unremarkable.",
+
+        searchable: true,
+
+        search: "You carefully inspect the stonework for concealed openings.",
+
+        secretDoor: {
+          id: "wizardLaboratoryNorthDoor",
+          destination: "wizardLaboratory",
+
+          foundDescription:
+            "Careful examination reveals the concealed outline and mechanism of a secret door.",
+
+          discoveredDescription:
+            "The concealed outline and mechanism of the secret door are now apparent in the stone wall.",
+        },
+
+        dm: {
+          hidden: false,
+          sourceArea: "Upper-level map",
+        },
+      },
+    ],
 
     dm: {
       areaType: "corridor",
@@ -660,9 +688,9 @@ export const rooms = {
 
     exits: {
       west: "northPassage",
-      south: "zelligarCloset",
+      southeast: "zelligarCloset",
+      southwest: "wizardAnnex",
     },
-
     features: [
       {
         id: "wallCarving",
@@ -835,7 +863,7 @@ export const rooms = {
       "Several bolts of cloth are stacked in one corner, five old garments hang along a wall, and four large books rest on a wooden stand. An oil lantern hangs elsewhere in the room, while a small table in another corner holds a dusty stack of papers beneath a stone paperweight.",
 
     exits: {
-      north: "wizardChamber",
+      northwest: "wizardChamber",
     },
 
     features: [
@@ -993,6 +1021,241 @@ export const rooms = {
       module: "B1",
       moduleName: "In Search of the Unknown",
       sourceArea: "6. CLOSET",
+    },
+  },
+  wizardAnnex: {
+    id: "wizardAnnex",
+    name: "Wizard's Annex",
+
+    description:
+      "This unusually shaped annex extends from Zelligar's chamber and widens into a triangular area at its south end.",
+
+    examine:
+      "The south end of the annex is the most striking part of the room.",
+
+    exits: {
+      northeast: "wizardChamber",
+    },
+
+    features: [
+      {
+        id: "southEnd",
+        name: "South End",
+
+        description:
+          "Two large wooden chests studded with jewels appear to overflow with riches. Gold pieces lie around and within them, mixed with glittering gems and jewels.",
+
+        interactions: [
+          {
+            id: "touchTreasure",
+            name: "Touch Treasure",
+
+            requiresExamination: true,
+
+            message:
+              "The instant you touch the apparent treasure, the entire magnificent hoard vanishes. The chests, coins, gems, and jewels were an illusion. The room is actually empty.",
+
+            afterDescription:
+              "The apparent treasure is gone. The room is empty. Near the south wall, the floor is bumpy and darkly discolored, as though it has been charred and partially melted by intense heat.",
+
+            dm: {
+              effect: "dispelIllusion",
+              temporary: true,
+              reappearsWithinHours: 24,
+              sourceArea: "7. WIZARD'S ANNEX",
+            },
+          },
+        ],
+
+        dm: {
+          hidden: false,
+
+          illusion: {
+            permanent: true,
+            dispelledBy: "touch",
+            reappearsWithinHours: 24,
+          },
+
+          actualTreasure: false,
+          actualRoomEmpty: true,
+
+          concealedUntilIllusionDispelled: {
+            floor:
+              "The floor near the south wall is bumpy, darkly discolored, and appears charred or partially melted by intense heat.",
+          },
+
+          sourceArea: "7. WIZARD'S ANNEX",
+        },
+      },
+    ],
+
+    dm: {
+      areaType: "room",
+      level: 1,
+      module: "B1",
+      moduleName: "In Search of the Unknown",
+
+      apparentPurpose: ["meditation", "study", "practice of magic spells"],
+
+      triangularSouthEnd: true,
+      southWallThickerThanElsewhere: true,
+
+      sourceArea: "7. WIZARD'S ANNEX",
+    },
+  },
+  wizardWorkroom: {
+    id: "wizardWorkroom",
+    name: "Wizard's Workroom",
+
+    image: {
+      src: "/images/rooms/wizards-workroom.png",
+      alt: "Adventurers examining a large glass jar containing a black cat suspended in clear liquid inside Zelligar's Wizard's Workroom.",
+    },
+
+    description:
+      "This room was used for the study and practice of magic. Several large wooden tables occupy the chamber, along with a prominent stone table near the center.",
+
+    examine:
+      "One wooden table lies overturned. The central stone table has a smooth black slate top buried beneath a thick layer of dust. Chairs and stools are scattered about the room, and wooden cabinets line the north wall.",
+
+    exits: {
+      north: "wizardLaboratory",
+    },
+
+    features: [
+      {
+        id: "woodenTables",
+        name: "Wooden Tables",
+
+        description:
+          "Several large wooden tables stand around the room. One has been overturned onto its side. Their surfaces are bare.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "8. WIZARD'S WORKROOM",
+        },
+      },
+
+      {
+        id: "stoneTable",
+        name: "Stone Table",
+
+        description:
+          "A heavy stone table stands prominently near the center of the room. Its top is a smooth slab of black slate, though a thick layer of dust hides much of its appearance. Nothing rests upon it.",
+
+        dm: {
+          hidden: false,
+          material: "stone",
+          topMaterial: "black slate",
+          sourceArea: "8. WIZARD'S WORKROOM",
+        },
+      },
+
+      {
+        id: "chairsAndStools",
+        name: "Chairs and Stools",
+
+        description:
+          "Several ordinary chairs and stools are scattered around the workroom.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "8. WIZARD'S WORKROOM",
+        },
+      },
+
+      {
+        id: "chemicalCabinets",
+        name: "Wooden Cabinets",
+
+        description:
+          "Wooden cabinets are mounted along the north wall, about four feet above the floor. They are unlocked and contain numerous glass and earthen containers holding old chemical compounds and supplies.",
+
+        dm: {
+          hidden: false,
+          locked: false,
+          containerCount: 40,
+          contentsDeterminedBy: "d20",
+          contentsValue: "no particular value",
+          sourceArea: "8. WIZARD'S WORKROOM",
+        },
+      },
+
+      {
+        id: "largeGlassJar",
+        name: "Large Glass Jar",
+
+        description:
+          "Among the smaller containers is a much larger clear glass jar. A black cat appears to be suspended inside it in a clear, colorless liquid. The jar is sealed with a large cork.",
+
+        dm: {
+          hidden: false,
+          sealed: true,
+          trigger: "removeCork",
+          sourceArea: "8. WIZARD'S WORKROOM",
+        },
+      },
+    ],
+
+    dm: {
+      areaType: "room",
+      level: 1,
+      module: "B1",
+      moduleName: "In Search of the Unknown",
+      access: "secretDoors",
+      adjacentArea: "9. WIZARD'S LABORATORY",
+      sourceArea: "8. WIZARD'S WORKROOM",
+    },
+  },
+  wizardLaboratory: {
+    id: "wizardLaboratory",
+    name: "Wizard's Laboratory",
+
+    description:
+      "This 50-foot by 30-foot laboratory contains an assortment of old magical equipment and devices. A large human skeleton hangs suspended from the ceiling in the northeast corner, its skull cracked.",
+
+    examine:
+      "Several large wooden tables and another heavy stone table occupy the laboratory. Old equipment and containers are scattered around the room.",
+
+    exits: {
+      south: "wizardWorkroom",
+    },
+
+    features: [
+      {
+        id: "northWall",
+        name: "North Wall",
+
+        description: "The finished stone wall appears unremarkable.",
+
+        searchable: true,
+
+        search: "You carefully inspect the stonework for concealed openings.",
+
+        secretDoor: {
+          id: "wizardLaboratoryNorthDoor",
+          destination: "northPassage",
+
+          foundDescription:
+            "Careful examination reveals the concealed outline and mechanism of a secret door.",
+
+          discoveredDescription:
+            "The concealed outline and mechanism of the secret door are now apparent in the stone wall.",
+        },
+
+        dm: {
+          hidden: false,
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+    ],
+
+    dm: {
+      areaType: "room",
+      level: 1,
+      module: "B1",
+      moduleName: "In Search of the Unknown",
+      sourceArea: "9. WIZARD'S LABORATORY",
     },
   },
 };

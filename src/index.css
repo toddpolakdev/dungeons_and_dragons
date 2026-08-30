@@ -12,17 +12,14 @@
 :root {
   --page-bg: #f3f1eb;
   --panel-bg: #fff;
-  --panel-border: #d1cec5;
+  --panel-border: #5e5c56;
   --rule: #e2dfd8;
   --rule-soft: #eee;
   --rule-step: #ddd;
-
   --text: #242424;
   --text-soft: #666;
   --text-muted: #777;
-
   --chip-bg: #ddd8cc;
-
   --button-bg: #fff;
   --button-border: #777;
   --button-hover: #ececec;
@@ -83,6 +80,7 @@ button {
 
 button:hover:not(:disabled) {
   background: var(--button-hover);
+  color: var(--text);
 }
 
 button:disabled {

@@ -675,6 +675,47 @@
   resize: both;
 }
 
+.latest-step-image {
+  margin: 1rem 0 0;
+}
+
+.latest-step-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.inspect-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0;
+  border: 0;
+  background: transparent;
+
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-soft);
+}
+
+.inspect-toggle:hover:not(:disabled) {
+  background: transparent;
+  color: var(--text);
+}
+
+.inspect-toggle-icon {
+  font-size: 11px;
+}
+
+.inspect-content {
+  margin-top: 10px;
+}
+
 @media (max-width: 760px) {
   .floating-body {
     width: calc(100vw - 34px);

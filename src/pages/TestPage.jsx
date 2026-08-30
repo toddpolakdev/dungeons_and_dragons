@@ -27,6 +27,7 @@ import {
   isOpen,
 } from "../game/locks";
 import { getTrapKey } from "../game/traps";
+import { traverseSecretDoor, searchForSecretDoor } from "../game/secretDoors";
 
 // Test-harness character switch. Change ACTIVE_CHARACTER to exercise the other
 // class: the thief is the default because lock-picking is the mechanic most
@@ -67,7 +68,7 @@ export default function TestPage() {
 
   const latestStep = steps[steps.length - 1];
 
-  function addStep(title, messages) {
+  function addStep(title, messages, image = null) {
     const messageList = Array.isArray(messages) ? messages : [messages];
 
     setSteps((prev) => [
@@ -76,6 +77,7 @@ export default function TestPage() {
         id: prev.length + 1,
         title,
         messages: messageList.filter(Boolean),
+        image,
       },
     ]);
   }
@@ -160,9 +162,17 @@ export default function TestPage() {
       }
     }
 
+    // If this feature contains a secret door that has already been discovered,
+    // describe the known door rather than pretending the wall is still ordinary.
+    if (
+      feature.secretDoor &&
+      worldState.discoveredSecretDoors.includes(feature.secretDoor.id) &&
+      feature.secretDoor.discoveredDescription
+    ) {
+      description = feature.secretDoor.discoveredDescription;
+    }
+
     // Then let the feature's CURRENT container/lock state win.
-    // This prevents an opened drawer from later describing itself
-    // using the original "locked" text.
     if (feature.container) {
       const open = isOpen({
         worldState,
@@ -224,11 +234,34 @@ export default function TestPage() {
       feature.search,
     ];
 
+    let discoveredSecretDoorId = null;
+
+    if (
+      feature.secretDoor &&
+      !worldState.discoveredSecretDoors.includes(feature.secretDoor.id)
+    ) {
+      const result = searchForSecretDoor({
+        player,
+        secretDoor: feature.secretDoor,
+      });
+
+      if (result.success) {
+        discoveredSecretDoorId = feature.secretDoor.id;
+
+        messages.push(
+          feature.secretDoor.foundDescription ??
+            "You discover a concealed secret door.",
+        );
+      }
+    }
+
     if (newlyDiscovered.length > 0) {
       messages.push(
         `You discover: ${newlyDiscovered.map((item) => item.name).join(", ")}.`,
       );
-    } else {
+    }
+
+    if (newlyDiscovered.length === 0 && !discoveredSecretDoorId) {
       messages.push("You find nothing new.");
     }
 
@@ -242,6 +275,12 @@ export default function TestPage() {
         : [...prev.searchedFeatures, featureKey],
 
       discoveredItems: [...prev.discoveredItems, ...newlyDiscovered],
+
+      discoveredSecretDoors:
+        discoveredSecretDoorId &&
+        !prev.discoveredSecretDoors.includes(discoveredSecretDoorId)
+          ? [...prev.discoveredSecretDoors, discoveredSecretDoorId]
+          : prev.discoveredSecretDoors,
     }));
   }
 
@@ -618,7 +657,53 @@ export default function TestPage() {
       }));
     }
 
-    addStep(`Move ${direction}: ${result.room.name}`, messages);
+    addStep(
+      `Move ${direction}: ${result.room.name}`,
+      messages,
+      result.room.image ?? null,
+    );
+  }
+
+  function handleUseSecretDoor(feature) {
+    if (gameState !== GAME_STATES.EXPLORING) return;
+
+    const result = traverseSecretDoor({
+      worldState,
+      secretDoor: feature.secretDoor,
+      rooms,
+    });
+
+    if (!result.success) {
+      addStep("Use Secret Door", result.message);
+      return;
+    }
+
+    setCurrentRoom(result.room);
+
+    setVisitedRoomIds((prev) =>
+      prev.includes(result.room.id) ? prev : [...prev, result.room.id],
+    );
+
+    setPathRoomIds((prev) => [...prev, result.room.id]);
+
+    const messages = [result.message];
+
+    const eventResult = resolveEvents(result.room.events?.onEnter, worldState);
+
+    if (eventResult.messages.length > 0) {
+      messages.push(...eventResult.messages);
+
+      setWorldState((prev) => ({
+        ...prev,
+        triggeredEvents: eventResult.triggeredEvents,
+      }));
+    }
+
+    addStep(
+      `Secret Door: ${result.room.name}`,
+      messages,
+      result.room.image ?? null,
+    );
   }
 
   return (
@@ -672,12 +757,13 @@ export default function TestPage() {
           onInteraction={handleInteraction}
           onOpenContainer={handleOpenContainer}
           onPickLock={handlePickLock}
+          onUseSecretDoor={handleUseSecretDoor}
           onMove={handleMove}
           onTakeItem={handleTakeItem}
           onAttack={handleAttack}
         />
 
-        <LatestStep step={latestStep} />
+        <LatestStep step={latestStep} room={currentRoom} />
       </div>
 
       <StepLog steps={steps} />
