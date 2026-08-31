@@ -1,9 +1,27 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import GameText from "./GameText";
 import SpeakButton from "../components/SpeakButton";
 
 export default function LatestStep({ step, room }) {
+  const [imageOpen, setImageOpen] = useState(false);
+
   const image = step?.image ?? room?.image ?? null;
+
+  useEffect(() => {
+    if (!imageOpen) return;
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        setImageOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [imageOpen]);
 
   return (
     <aside className="panel latest-panel">
@@ -23,9 +41,42 @@ export default function LatestStep({ step, room }) {
           ))}
 
           {image && (
-            <figure className="latest-step-image">
-              <img src={image.src} alt={image.alt} />
-            </figure>
+            <>
+              <button
+                type="button"
+                className="latest-step-image"
+                onClick={() => setImageOpen(true)}
+                aria-label="View larger image"
+              >
+                <img src={image.src} alt={image.alt} />
+              </button>
+
+              {imageOpen && (
+                <div
+                  className="image-modal"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Larger scene image"
+                  onClick={() => setImageOpen(false)}
+                >
+                  <button
+                    type="button"
+                    className="image-modal-close"
+                    onClick={() => setImageOpen(false)}
+                    aria-label="Close image"
+                  >
+                    ×
+                  </button>
+
+                  <div
+                    className="image-modal-content"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <img src={image.src} alt={image.alt} />
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </>
       ) : (

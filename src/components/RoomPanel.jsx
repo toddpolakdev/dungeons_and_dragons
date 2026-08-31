@@ -30,7 +30,25 @@ export default function RoomPanel({
   );
 
   return (
-    <section className="panel">
+    <section className="panel room-panel">
+      {gameState === GAME_STATES.EXPLORING && (
+        <div className="travel-section">
+          <h3>Travel</h3>
+
+          <div className="button-row">
+            {Object.keys(room.exits ?? {}).map((direction) => (
+              <button
+                key={direction}
+                className="move-button"
+                onClick={() => onMove(direction)}
+              >
+                Go {direction}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <h2 className="room-name">{room.name}</h2>
 
       <div className="room-description">
@@ -51,7 +69,6 @@ export default function RoomPanel({
           onOpenContainer={onOpenContainer}
           onPickLock={onPickLock}
           onUseSecretDoor={onUseSecretDoor}
-          onMove={onMove}
         />
       )}
 

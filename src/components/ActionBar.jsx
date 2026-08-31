@@ -31,129 +31,108 @@ export default function ActionBar({
   onOpenContainer,
   onPickLock,
   onUseSecretDoor,
-  onMove,
 }) {
   const [inspectOpen, setInspectOpen] = useState(true);
 
   return (
-    <>
-      <div className="action-section">
-        <h3>Travel</h3>
+    <div className="action-section">
+      <button
+        type="button"
+        className="inspect-toggle"
+        onClick={() => setInspectOpen((open) => !open)}
+        aria-expanded={inspectOpen}
+      >
+        <span>Inspect</span>
+        <span className="inspect-toggle-icon">{inspectOpen ? "▼" : "▶"}</span>
+      </button>
 
-        <div className="button-row">
-          {Object.keys(room.exits ?? {}).map((direction) => (
-            <button
-              key={direction}
-              className="move-button"
-              onClick={() => onMove(direction)}
-            >
-              Go {direction}
-            </button>
-          ))}
-        </div>
-      </div>
+      {inspectOpen && (
+        <div className="inspect-content">
+          <div className="action-group">
+            <span className="action-group-label">This room</span>
 
-      <div className="action-section">
-        <button
-          type="button"
-          className="inspect-toggle"
-          onClick={() => setInspectOpen((open) => !open)}
-          aria-expanded={inspectOpen}
-        >
-          <span>Inspect</span>
-          <span className="inspect-toggle-icon">{inspectOpen ? "▼" : "▶"}</span>
-        </button>
-
-        {inspectOpen && (
-          <div className="inspect-content">
-            <div className="action-group">
-              <span className="action-group-label">This room</span>
-
-              <div className="button-row">
-                <button onClick={onExamineRoom}>Examine</button>
-              </div>
+            <div className="button-row">
+              <button onClick={onExamineRoom}>Examine</button>
             </div>
-
-            {room.features?.map((feature) => {
-              const interactions = availableInteractions(
-                room,
-                feature,
-                worldState,
-              );
-
-              const featureKey = `${room.id}:${feature.id}`;
-
-              const examined = worldState.examinedFeatures.includes(featureKey);
-
-              const lockPickAvailable =
-                examined &&
-                canPickLock({
-                  player,
-                  worldState,
-                  roomId: room.id,
-                  featureId: feature.id,
-                  lock: feature.lock,
-                });
-
-              const secretDoorDiscovered =
-                feature.secretDoor &&
-                worldState.discoveredSecretDoors.includes(
-                  feature.secretDoor.id,
-                );
-
-              return (
-                <div className="action-group" key={feature.id}>
-                  <span className="action-group-label">{feature.name}</span>
-
-                  <div className="button-row">
-                    <button onClick={() => onExamineFeature(feature)}>
-                      Examine
-                    </button>
-
-                    {feature.searchable &&
-                      feature.search &&
-                      !secretDoorDiscovered && (
-                        <button
-                          className="search-button"
-                          onClick={() => onSearchFeature(feature)}
-                        >
-                          Search
-                        </button>
-                      )}
-
-                    {feature.container && examined && (
-                      <button onClick={() => onOpenContainer(feature)}>
-                        Open {feature.container.name}
-                      </button>
-                    )}
-
-                    {interactions.map((interaction) => (
-                      <button
-                        key={interaction.id}
-                        onClick={() => onInteraction(feature, interaction)}
-                      >
-                        {interaction.name}
-                      </button>
-                    ))}
-
-                    {lockPickAvailable && (
-                      <button onClick={() => onPickLock(feature)}>
-                        Pick Lock
-                      </button>
-                    )}
-
-                    {secretDoorDiscovered && (
-                      <button onClick={() => onUseSecretDoor(feature)}>
-                        Use Secret Door
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
           </div>
-        )}
-      </div>
-    </>
+
+          {room.features?.map((feature) => {
+            const interactions = availableInteractions(
+              room,
+              feature,
+              worldState,
+            );
+
+            const featureKey = `${room.id}:${feature.id}`;
+
+            const examined = worldState.examinedFeatures.includes(featureKey);
+
+            const lockPickAvailable =
+              examined &&
+              canPickLock({
+                player,
+                worldState,
+                roomId: room.id,
+                featureId: feature.id,
+                lock: feature.lock,
+              });
+
+            const secretDoorDiscovered =
+              feature.secretDoor &&
+              worldState.discoveredSecretDoors.includes(feature.secretDoor.id);
+
+            return (
+              <div className="action-group" key={feature.id}>
+                <span className="action-group-label">{feature.name}</span>
+
+                <div className="button-row">
+                  <button onClick={() => onExamineFeature(feature)}>
+                    Examine
+                  </button>
+
+                  {feature.searchable &&
+                    feature.search &&
+                    !secretDoorDiscovered && (
+                      <button
+                        className="search-button"
+                        onClick={() => onSearchFeature(feature)}
+                      >
+                        Search
+                      </button>
+                    )}
+
+                  {feature.container && examined && (
+                    <button onClick={() => onOpenContainer(feature)}>
+                      Open {feature.container.name}
+                    </button>
+                  )}
+
+                  {interactions.map((interaction) => (
+                    <button
+                      key={interaction.id}
+                      onClick={() => onInteraction(feature, interaction)}
+                    >
+                      {interaction.name}
+                    </button>
+                  ))}
+
+                  {lockPickAvailable && (
+                    <button onClick={() => onPickLock(feature)}>
+                      Pick Lock
+                    </button>
+                  )}
+
+                  {secretDoorDiscovered && (
+                    <button onClick={() => onUseSecretDoor(feature)}>
+                      Use Secret Door
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }

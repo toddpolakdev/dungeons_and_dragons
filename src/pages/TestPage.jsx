@@ -28,6 +28,7 @@ import {
 } from "../game/locks";
 import { getTrapKey } from "../game/traps";
 import { traverseSecretDoor, searchForSecretDoor } from "../game/secretDoors";
+import { resolveSavingThrow } from "../game/savingThrows";
 
 // Test-harness character switch. Change ACTIVE_CHARACTER to exercise the other
 // class: the thief is the default because lock-picking is the mechanic most
@@ -346,6 +347,31 @@ export default function TestPage() {
 
     let damage = 0;
     let activeEffect = null;
+    let saveResult = null;
+
+    if (interaction.effects?.savingThrow) {
+      const savingThrow = interaction.effects.savingThrow;
+
+      saveResult = resolveSavingThrow({
+        character: player,
+        type: savingThrow.type,
+      });
+
+      if (!saveResult.configured) {
+        addStep(interaction.name, [
+          interaction.message,
+          `A save vs. ${savingThrow.label ?? savingThrow.type} is required, but this character does not yet have a saving-throw target configured.`,
+        ]);
+
+        return;
+      }
+
+      messages.push(
+        `Save vs. ${savingThrow.label ?? savingThrow.type}: ${saveResult.roll} vs. ${saveResult.target} — ${
+          saveResult.success ? "success" : "failure"
+        }.`,
+      );
+    }
 
     if (interaction.effects?.damage) {
       damage = rollFormula(interaction.effects.damage);
@@ -355,18 +381,27 @@ export default function TestPage() {
       );
     }
 
-    if (interaction.effects?.condition) {
-      const durationTurns = rollFormula(interaction.effects.condition.duration);
+    if (
+      interaction.effects?.condition &&
+      (!interaction.effects?.savingThrow || !saveResult?.success)
+    ) {
+      const condition = interaction.effects.condition;
+      const duration = rollFormula(condition.duration);
+      const durationUnit = condition.durationUnit ?? "turns";
 
       activeEffect = {
-        ...interaction.effects.condition,
-        durationTurns,
+        ...condition,
+        durationUnit,
         roomId: currentRoom.id,
         featureId: feature.id,
+
+        ...(durationUnit === "rounds"
+          ? { durationRounds: duration }
+          : { durationTurns: duration }),
       };
 
       messages.push(
-        `${activeEffect.name}: ${activeEffect.description} (${durationTurns} turns).`,
+        `${activeEffect.name}: ${activeEffect.description} (${duration} ${durationUnit}).`,
       );
     }
 

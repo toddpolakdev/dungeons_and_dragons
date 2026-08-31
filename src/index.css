@@ -1,35 +1,36 @@
 /*
- * Base reset and design tokens.
+ * Base reset and design tokens for the development / testing UI.
  *
- * The final art direction is deliberately undecided — see docs/01_PRODUCT_DIRECTION.md,
- * guardrail 1. These tokens describe the *current* restrained testing UI and exist so
- * that choosing an aesthetic later is a token swap rather than a rewrite of every rule.
- *
- * This file previously held unmodified Vite template CSS (a fixed 1126px centred #root,
- * a 56px h1, an unused purple accent and dark-mode block), which fought the app styles.
+ * The final product art direction is still intentionally open. This is a practical
+ * dark-mode testing palette so long dungeon sessions are easier on the eyes.
  */
 
 :root {
-  --page-bg: #f3f1eb;
-  --panel-bg: #fff;
-  --panel-border: #5e5c56;
-  --rule: #e2dfd8;
-  --rule-soft: #eee;
-  --rule-step: #ddd;
-  --text: #242424;
-  --text-soft: #666;
-  --text-muted: #777;
-  --chip-bg: #ddd8cc;
-  --button-bg: #fff;
-  --button-border: #777;
-  --button-hover: #ececec;
-  --button-strong-bg: #353535;
-  --button-strong-hover: #555;
-  --button-search-bg: #f5ead1;
-  --button-search-border: #bba776;
+  --page-bg: #0f1115;
+  --panel-bg: #171a21;
+  --panel-border: #353d49;
+  --rule: #2d3440;
+  --rule-soft: #252b35;
+  --rule-step: #303744;
 
-  --debug-bg: #222;
-  --debug-text: #eee;
+  --text: #edf0f5;
+  --text-soft: #b2bac7;
+  --text-muted: #8e98a7;
+
+  --chip-bg: #242a34;
+
+  --button-bg: #202630;
+  --button-border: #46515f;
+  --button-hover: #2b3440;
+
+  --button-strong-bg: #3f658d;
+  --button-strong-hover: #4d78a5;
+
+  --button-search-bg: #3a3121;
+  --button-search-border: #806a3b;
+
+  --debug-bg: #0b0d11;
+  --debug-text: #dce2eb;
 
   --radius: 8px;
   --radius-sm: 5px;
@@ -37,11 +38,15 @@
 
   --font: Arial, Helvetica, sans-serif;
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  background: var(--page-bg);
 }
 
 body {
@@ -81,6 +86,11 @@ button {
 button:hover:not(:disabled) {
   background: var(--button-hover);
   color: var(--text);
+}
+
+button:focus-visible {
+  outline: 2px solid #7fa8d3;
+  outline-offset: 2px;
 }
 
 button:disabled {

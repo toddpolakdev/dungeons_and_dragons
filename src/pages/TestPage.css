@@ -76,6 +76,28 @@
   margin-bottom: 24px;
 }
 
+/*
+ * Travel lives at the very top of the room panel so expanding Inspect,
+ * discoveries, long descriptions, and step results never push navigation around.
+ */
+.travel-section {
+  margin: -4px -4px 20px;
+  padding: 4px 4px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.travel-section h3 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.room-panel .room-name {
+  margin-top: 0;
+}
+
 /* ---------- Actions ---------- */
 
 .action-section {
@@ -435,7 +457,7 @@
 
 .map-pin--picked {
   background: #111;
-  border-color: #111;
+  border-color: #d7dde6;
 }
 
 .map-controls {
@@ -502,7 +524,7 @@
 
 .map-pin--target {
   background: #111;
-  border-color: #fff;
+  border-color: #d7dde6;
   box-shadow: 0 0 0 2px #111;
 }
 
@@ -515,7 +537,7 @@
   line-height: 1.2;
   padding: 2px 5px;
   border-radius: var(--radius-xs);
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(23, 26, 33, 0.94);
   border: 1px solid var(--panel-border);
   color: var(--text);
 }
@@ -676,7 +698,17 @@
 }
 
 .latest-step-image {
+  display: block;
+  width: 100%;
   margin: 1rem 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.latest-step-image:hover:not(:disabled) {
+  background: transparent;
 }
 
 .latest-step-image img {
@@ -684,6 +716,75 @@
   width: 100%;
   height: auto;
   border-radius: 6px;
+}
+
+/* ---------- Image modal ---------- */
+
+.image-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 32px;
+
+  background: rgba(0, 0, 0, 0.88);
+}
+
+.image-modal-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  max-width: 95vw;
+  max-height: 90vh;
+}
+
+.image-modal-content img {
+  display: block;
+  max-width: 95vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.image-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+
+  width: 44px;
+  height: 44px;
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+
+  font-size: 30px;
+  line-height: 1;
+}
+
+.image-modal-close:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+@media (max-width: 760px) {
+  .image-modal {
+    padding: 16px;
+  }
+
+  .image-modal-content img {
+    max-width: 100%;
+  }
 }
 
 .inspect-toggle {
