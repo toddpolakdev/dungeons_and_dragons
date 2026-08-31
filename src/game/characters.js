@@ -10,6 +10,14 @@ export const createPlayer = () => ({
   attackBonus: 3,
   damage: "1d6",
 
+  savingThrows: {
+    poison: 12,
+    wands: 13,
+    paralysisOrStone: 14,
+    dragonBreath: 15,
+    spells: 16,
+  },
+
   equipment: [],
   thiefSkills: null,
 });
@@ -21,11 +29,18 @@ export const createTestThief = () => ({
   classId: "thief",
   level: 1,
 
-  // Temporary test-harness combat values.
   hp: 20,
   ac: 12,
   attackBonus: 3,
   damage: "1d6",
+
+  savingThrows: {
+    poison: 13,
+    wands: 14,
+    paralysisOrStone: 13,
+    dragonBreath: 16,
+    spells: 15,
+  },
 
   equipment: ["thieves-tools"],
 

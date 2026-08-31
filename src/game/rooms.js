@@ -3,6 +3,11 @@ export const rooms = {
     id: "entrance",
     name: "Entrance",
 
+    image: {
+      src: "/images/rooms/entrance.png",
+      alt: "Adventurers approaching the vine-covered entrance to Quasqueton.",
+    },
+
     description:
       "A cave-like opening, partly obscured by vegetation, lies at the end of a treacherous path climbing a craggy outcropping of black rock.",
 
@@ -1215,13 +1220,341 @@ export const rooms = {
       "This 50-foot by 30-foot laboratory contains an assortment of old magical equipment and devices. A large human skeleton hangs suspended from the ceiling in the northeast corner, its skull cracked.",
 
     examine:
-      "Several large wooden tables and another heavy stone table occupy the laboratory. Old equipment and containers are scattered around the room.",
+      "Large wooden tables and a heavy stone table occupy the room. A smoked-glass bottle rests on one table. Elsewhere are pine logs, a wooden rack, a stretched leather skin covered in strange writing, a sunken fire pit, several vats, glassware and containers, an upright coffin, two kegs, and shelving along the north wall.",
 
     exits: {
       south: "wizardWorkroom",
     },
 
     features: [
+      {
+        id: "hangingSkeleton",
+        name: "Hanging Skeleton",
+
+        description:
+          "A large human skeleton hangs suspended from the ceiling in the northeast corner of the laboratory. Its skull is cracked.",
+
+        dm: {
+          hidden: false,
+          trueIdentity: "remains of a barbarian chieftain",
+          identityKnowableNormally: false,
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
+      {
+        id: "laboratoryTables",
+        name: "Laboratory Tables",
+
+        description:
+          "Several large wooden tables stand about the laboratory, along with a heavy stone table similar to the one in the adjoining workroom. Their surfaces are bare except for a single stoppered smoked-glass bottle.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
+      {
+        id: "smokedGlassBottle",
+        name: "Smoked-Glass Bottle",
+
+        description:
+          "A single stoppered bottle of smoked glass rests on one of the tables. Its contents cannot be clearly seen through the darkened glass.",
+
+        interactions: [
+          {
+            id: "unstopSmokedGlassBottle",
+            name: "Unstop Bottle",
+
+            requiresExamination: true,
+
+            message:
+              "You pull the cork from the smoked-glass bottle. A pungent gas immediately rushes out with a whoosh.",
+
+            afterDescription:
+              "The smoked-glass bottle stands open and empty on the table.",
+
+            effects: {
+              savingThrow: {
+                type: "poison",
+                label: "Poison",
+              },
+
+              condition: {
+                id: "laughingGas",
+                name: "Uncontrollable Laughter",
+                description:
+                  "You are overcome by spasms of uncontrollable, raucous laughter and cannot effectively oppose an attacker.",
+                duration: "1d6",
+                durationUnit: "rounds",
+              },
+            },
+
+            dm: {
+              radiusFeet: 10,
+              dropChancePercent: 50,
+              causesAdditionalWanderingMonsterCheck: true,
+              monsterArrivalDelayRounds: "1d4",
+              dispelledBy: "dispelMagic",
+              sourceArea: "9. WIZARD'S LABORATORY",
+            },
+          },
+        ],
+
+        dm: {
+          hidden: false,
+          stoppered: true,
+
+          gas: {
+            type: "laughingGas",
+            trigger: "removeStopper",
+            radiusFeet: 10,
+            savingThrow: "poison",
+            durationRounds: "1d6",
+            dropChancePercent: 50,
+            preventsOppositionWhileAffected: true,
+            causesAdditionalWanderingMonsterCheck: true,
+            monsterArrivalDelayRounds: "1d4",
+            dispelledBy: "dispelMagic",
+          },
+
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
+      {
+        id: "pineLogs",
+        name: "Pine Logs",
+
+        description:
+          "Several pine logs are piled beneath one of the laboratory tables.",
+
+        interactions: [
+          {
+            id: "movePineLogs",
+            name: "Move Logs",
+
+            requiresExamination: true,
+
+            message:
+              "You shift the pine logs aside. Something bright and metallic glints beneath them.",
+
+            afterDescription:
+              "The pine logs have been moved aside, exposing the dusty floor beneath the table.",
+
+            discoveredItem: {
+              id: "laboratory-gold-ring",
+              name: "Shiny Gold-Colored Ring",
+              type: "item",
+              quantity: 1,
+              source: "Beneath the pine logs",
+
+              description:
+                "A brilliantly shiny ring lies beneath the logs. It appears to be gold and might seem worth as much as 100 gold pieces, but it is actually worthless and possesses no magical properties.",
+
+              actualValueGp: 0,
+              apparentValueGp: 100,
+              magical: false,
+            },
+
+            dm: {
+              sourceArea: "9. WIZARD'S LABORATORY",
+            },
+          },
+        ],
+
+        dm: {
+          hidden: false,
+          concealsItem: "laboratory-gold-ring",
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
+      {
+        id: "woodenRack",
+        name: "Wooden Rack",
+
+        description:
+          "A large wooden rack stands along the west wall. It appears sized to hold a human body and resembles something from a torture chamber. A thin streak of dried blood stains the front of its oaken frame.",
+
+        dm: {
+          hidden: false,
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
+      {
+        id: "leatherSkin",
+        name: "Stretched Leather Skin",
+
+        description:
+          "A stretched leather skin hangs on the south wall. Strange magical writing covers its surface. The skin looks extremely old and fragile.",
+
+        interactions: [
+          {
+            id: "removeLeatherSkin",
+            name: "Remove Skin",
+
+            requiresExamination: true,
+
+            message:
+              "The ancient leather begins to crack and crumble as you try to remove it. The skin falls apart, irreparably destroying the writing.",
+
+            afterDescription:
+              "Only ruined scraps of the ancient leather remain. The magical writing has been destroyed.",
+
+            dm: {
+              effect: "destroyWriting",
+              sourceArea: "9. WIZARD'S LABORATORY",
+            },
+          },
+        ],
+
+        dm: {
+          hidden: false,
+          language: "magic",
+          readableNormally: false,
+          requiresReadMagic: true,
+          decodedText:
+            "What mysterious happenings have their birth here? Only the greatest feats of wizardry, for which every element of earth, water and sky is but a tool!",
+          removableIntact: false,
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
+      {
+        id: "firePit",
+        name: "Sunken Fire Pit",
+
+        description:
+          "A blackened, cold fire pit lies near the center of the laboratory. It is about four feet wide and two feet deep, although several inches of ash partly fill it. An iron brace spans the opening and supports a cast-iron pot.",
+
+        dm: {
+          hidden: false,
+          depthFeet: 2,
+          widthFeet: 4,
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
+      {
+        id: "castIronPots",
+        name: "Cast-Iron Pots",
+
+        description:
+          "One heavy cast-iron pot hangs over the fire pit. It is empty except for a harmless brown residue clinging to its interior. A second, shallower pot lies beside the pit and is empty. Both are extraordinarily heavy.",
+
+        dm: {
+          hidden: false,
+          count: 2,
+          moveRequirement: {
+            minimumCharacters: 2,
+            minimumStrengthEach: 14,
+          },
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
+      {
+        id: "vats",
+        name: "Wooden Vats",
+
+        description:
+          "Three wooden vats stand in the southwest corner. Two are large, each holding roughly one hundred gallons, and are empty. The third is about half their size and is half-filled with murky, muddy water.",
+
+        dm: {
+          hidden: false,
+          largeVatCount: 2,
+          largeVatCapacityGallons: 100,
+          largeVatsEmpty: true,
+          smallVatCapacityGallons: 50,
+          smallVatHalfFull: true,
+          smallVatContents: "murky muddy water",
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
+      {
+        id: "stoneStand",
+        name: "Stone Stand",
+
+        description:
+          "A stone block used as a table or stand sits beside the vats along the west wall. Six earthen containers and assorted pieces of dusty glassware rest on and around it. Some glassware bears old residue, but all of it is empty.",
+
+        dm: {
+          hidden: false,
+          earthenContainerCount: 6,
+          containerContentsUseArea8Table: true,
+          glasswareEmpty: true,
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
+      {
+        id: "woodenCoffin",
+        name: "Wooden Coffin",
+
+        description:
+          "A plain wooden coffin stands upright in the northwest corner. The wood has begun to rot in places.",
+
+        interactions: [
+          {
+            id: "openCoffin",
+            name: "Open Coffin",
+
+            requiresExamination: true,
+
+            message: "The coffin opens easily. There is nothing inside.",
+
+            afterDescription:
+              "The plain wooden coffin stands open and empty in the northwest corner.",
+
+            dm: {
+              sourceArea: "9. WIZARD'S LABORATORY",
+            },
+          },
+        ],
+
+        dm: {
+          hidden: false,
+          empty: true,
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
+      {
+        id: "kegs",
+        name: "Kegs",
+
+        description:
+          "Two old kegs rest against the north wall. Each bears a letter code indicating its contents.",
+
+        dm: {
+          hidden: false,
+          count: 2,
+          contentsDeterminedAsStoreroomKegs: true,
+          relatedArea: "10. STOREROOM",
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
+      {
+        id: "northShelving",
+        name: "North-Wall Shelving",
+
+        description:
+          "Wooden shelving along the north wall holds additional dusty glassware and three more containers like those found in Zelligar's workroom. Two small trays contain differently colored powdered incense, whose aroma readily reveals what they are.",
+
+        dm: {
+          hidden: false,
+          containerCount: 3,
+          containerContentsUseArea8Table: true,
+          incenseTrayCount: 2,
+          sourceArea: "9. WIZARD'S LABORATORY",
+        },
+      },
+
       {
         id: "northWall",
         name: "North Wall",
@@ -1255,6 +1588,10 @@ export const rooms = {
       level: 1,
       module: "B1",
       moduleName: "In Search of the Unknown",
+      dimensionsFeet: {
+        width: 50,
+        depth: 30,
+      },
       sourceArea: "9. WIZARD'S LABORATORY",
     },
   },
